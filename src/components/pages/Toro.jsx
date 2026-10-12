@@ -929,7 +929,7 @@ const Toro = () => {
                     </div>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                {/* <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <div className="section-label" style={{ fontSize: 'clamp(9px, 1.2vh, 11px)', fontWeight: 700, textTransform: 'uppercase', color: isDark ? '#94A3B8' : '#475569', marginBottom: '0.4vh', transition: 'color 0.3s ease' }}>Etiquetas de Coordenadas</div>
                     <div>
                         <select
@@ -956,6 +956,65 @@ const Toro = () => {
                             <option value="highlights" style={{ backgroundColor: isDark ? '#1E293B' : '#FFFFFF', color: isDark ? '#F8FAFC' : '#0F172A' }}>Mostrar Solo Destacados</option>
                             <option value="all" style={{ backgroundColor: isDark ? '#1E293B' : '#FFFFFF', color: isDark ? '#F8FAFC' : '#0F172A' }}>Mostrar Todas</option>
                         </select>
+                    </div>
+                </div><br /> */}
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div className="section-label" style={{ fontSize: 'clamp(9px, 1.2vh, 11px)', fontWeight: 700, textTransform: 'uppercase', color: isDark ? '#94A3B8' : '#475569', marginBottom: '0.4vh', transition: 'color 0.3s ease' }}>Etiquetas de Coordenadas</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <button
+                            onClick={() => toggleLabelsVisibility('none')}
+                            style={{
+                                width: '100%',
+                                padding: 'clamp(5px, 0.8vh, 8px)',
+                                fontSize: 'clamp(9px, 1.2vh, 11px)',
+                                fontWeight: 600,
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                textAlign: 'left',
+                                backgroundColor: labelsVisibility === 'none' ? (isDark ? '#2563EB' : '#1D4ED8') : (isDark ? '#0F172A' : '#F1F5F9'),
+                                color: labelsVisibility === 'none' ? '#F8FAFC' : (isDark ? '#94A3B8' : '#64748B'),
+                                transition: 'all 0.3s ease'
+                            }}
+                        >
+                            • Ocultar Coordenadas
+                        </button>
+                        <button
+                            onClick={() => toggleLabelsVisibility('highlights')}
+                            style={{
+                                width: '100%',
+                                padding: 'clamp(5px, 0.8vh, 8px)',
+                                fontSize: 'clamp(9px, 1.2vh, 11px)',
+                                fontWeight: 600,
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                textAlign: 'left',
+                                backgroundColor: labelsVisibility === 'highlights' ? (isDark ? '#2563EB' : '#1D4ED8') : (isDark ? '#0F172A' : '#F1F5F9'),
+                                color: labelsVisibility === 'highlights' ? '#F8FAFC' : (isDark ? '#94A3B8' : '#64748B'),
+                                transition: 'all 0.3s ease'
+                            }}
+                        >
+                            • Mostrar Solo Destacados
+                        </button>
+                        <button
+                            onClick={() => toggleLabelsVisibility('all')}
+                            style={{
+                                width: '100%',
+                                padding: 'clamp(5px, 0.8vh, 8px)',
+                                fontSize: 'clamp(9px, 1.2vh, 11px)',
+                                fontWeight: 600,
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                textAlign: 'left',
+                                backgroundColor: labelsVisibility === 'all' ? (isDark ? '#2563EB' : '#1D4ED8') : (isDark ? '#0F172A' : '#F1F5F9'),
+                                color: labelsVisibility === 'all' ? '#F8FAFC' : (isDark ? '#94A3B8' : '#64748B'),
+                                transition: 'all 0.3s ease'
+                            }}
+                        >
+                            • Mostrar Todas
+                        </button>
                     </div>
                 </div><br />
             </div>
