@@ -7,7 +7,7 @@ const Inicio = () => {
     return (
         <>
             <h1>inicio</h1>
-            <p>Este proyecto nace con el interés de compartir lo que hemos aprendido en la búsqueda por reconocer otras formas de conocimientos empleados por nuestros ancestros y que dejaron en herencia a través de las generaciones, así como la reapropiación de los mismos recuperando nuestra propia identidad a través de la descolonización.
+            <p>El <strong>Kāuhnemismachiyotl</strong>tiene como proposito... Este proyecto nace con el interés de compartir lo que hemos aprendido en la búsqueda por reconocer otras formas de conocimientos empleados por nuestros ancestros y que dejaron en herencia a través de las generaciones, así como la reapropiación de los mismos recuperando nuestra propia identidad a través de la descolonización.
                 Este programa es una forma de conocer y comprender el cómputo del tiempo precolonial, la matemática implícita y la cuenta del tiempo hasta nuestros días. Es una reflexión del pasado hacia el futuro y el futuro hacia el pasado.
                 Utilizando herramientas tecnológicas y comprendiendo la matemática en la estructura de la cuenta de los días, compartimos con ustedes una propuesta dedicada a aquellos interesados en sumergirse en la lectura e interpretación de los códices y otras investigaciones....
             </p>
