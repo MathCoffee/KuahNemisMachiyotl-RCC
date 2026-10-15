@@ -142,8 +142,8 @@ const Toro = () => {
     const isDark = theme === 'dark';
 
     // --- ESTADOS ORIGINALES DE LA APLICACIÓN ---
-    const [currentRepresentation, setCurrentRepresentation] = useState('numeros'); // 'numeros' | 'imagenes'
-    const [followMode, setFollowMode] = useState('cursor'); // 'cursor' | 'trayectoria'
+    const [currentRepresentation, setCurrentRepresentation] = useState('imagenes'); // 'numeros' | 'imagenes'
+    const [followMode, setFollowMode] = useState('trayectoria'); // 'cursor' | 'trayectoria'
     const [speed, setSpeed] = useState(300); // ms por intervalo
     const [activeDayData, setActiveDayData] = useState(() => {
         const data = toroData.points[1];
@@ -152,8 +152,8 @@ const Toro = () => {
 
     const plotRef = useRef(null);
     const plotAreaRef = useRef(null); // Referencia al contenedor principal del Plot
-    const followModeRef = useRef('cursor');
-    const representationRef = useRef('numeros');
+    const followModeRef = useRef('trayectoria');
+    const representationRef = useRef('imagenes');
     const [labelsVisibility, setLabelsVisibility] = useState('none'); // O 'none'/'all' según tu valor inicial por defecto
     // --- ESTADOS DE CONTROL CRÍTICOS (SIN RETRASOS) ---
     const currentDayRef = useRef(1); // Siempre inicia en el día 1 al montar por primera vez (cambios de menú)
@@ -823,7 +823,8 @@ const Toro = () => {
                 transition: 'background-color 0.3s ease, border-color 0.3s ease'
             }}>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <h1 style={{ margin: '0', fontSize: 'clamp(1.7vw, 2.5vh, 24px)', fontWeight: 800, color: isDark ? '#F8FAFC' : '#0F172A', lineHeight: '1.2', transition: 'color 0.3s ease' }}>Tonalpohualli</h1>
+                    <h1 style={{ margin: '0', fontSize: 'clamp(1.6vw, 2.5vh, 24px)', fontWeight: 800, color: isDark ? '#F8FAFC' : '#0F172A', lineHeight: '1.2', transition: 'color 0.3s ease' }}>Kāuhnemismachiyotl</h1>
+                    <h5 style={{ margin: '0', fontSize: 'clamp(1.2vw, 2vh, 20px)', fontWeight: 800, color: isDark ? '#F8FAFC' : '#0F172A', lineHeight: '1.2', transition: 'color 0.3s ease' }}>Tonalpohualli</h5>
                     <div className="subtitle" style={{ fontSize: 'clamp(0.7vw, 1.1vh, 10px)', color: '#64748B', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', marginTop: '2px' }}>Toro Interactivo 3D - Modelo Z₁₃ ⊕ Z₂₀</div>
                 </div>
 
@@ -839,7 +840,7 @@ const Toro = () => {
                     <div className="section-label" style={{ fontSize: 'clamp(9px, 1.2vh, 11px)', fontWeight: 700, textTransform: 'uppercase', color: isDark ? '#94A3B8' : '#475569', marginBottom: '0.4vh', transition: 'color 0.3s ease' }}>Representación</div>
                     <div className="selector-container" style={{ display: 'flex', backgroundColor: isDark ? '#0F172A' : '#F1F5F9', borderRadius: '8px', padding: '3px', transition: 'background-color 0.3s ease' }}>
                         <button className={`selector-btn ${currentRepresentation === 'numeros' ? 'active' : ''}`} onClick={() => toggleLabelsRepresentation('numeros')} style={{ flex: 1, padding: 'clamp(0.9vw, 0.7vh, 7px) 3px', fontSize: 'clamp(9px, 1.2vh, 11px)', fontWeight: 600, border: 'none', borderRadius: '6px', cursor: 'pointer', backgroundColor: currentRepresentation === 'numeros' ? (isDark ? '#38BDF8' : '#2563EB') : 'transparent', color: currentRepresentation === 'numeros' ? (isDark ? '#0F172A' : '#FFFFFF') : (isDark ? '#94A3B8' : '#64748B'), transition: 'all 0.3s ease' }}>
-                            Números (q, r)
+                            Pares (q, r)
                         </button>
                         <button className={`selector-btn ${currentRepresentation === 'imagenes' ? 'active' : ''}`} onClick={() => toggleLabelsRepresentation('imagenes')} style={{ flex: 1, padding: 'clamp(0.9vw, 0.7vh, 7px) 3px', fontSize: 'clamp(9px, 1.2vh, 11px)', fontWeight: 600, border: 'none', borderRadius: '6px', cursor: 'pointer', backgroundColor: currentRepresentation === 'imagenes' ? (isDark ? '#38BDF8' : '#2563EB') : 'transparent', color: currentRepresentation === 'imagenes' ? (isDark ? '#0F172A' : '#FFFFFF') : (isDark ? '#94A3B8' : '#64748B'), transition: 'all 0.3s ease' }}>
                             (Numeral, Glifo)
