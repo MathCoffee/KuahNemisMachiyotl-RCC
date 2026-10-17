@@ -431,6 +431,159 @@ export const cempohualliCaso = (date) => {
 
 }
 
+/**
+ * Calcula la posición de una fecha dentro del ciclo ritual de 18,980 días (52 años) según Alfonso Caso.
+ * Referencia: El ciclo inicia en el año 2-Caña cada 52 años (ej. 1507-01-28 12:00 pm, 2026-10-03 12:00 pm).
+ * Los días comienzan a las 12:00 pm.
+ * @param {string|Date} sdate - Fecha en formato 'YYYY-MM-DD' o Date
+ * @param {string} [time] - Hora en formato 'HH:MM' (opcional, por defecto 12:00 pm)
+ * @returns {object|null} Resultado del cálculo o null si no hay fecha.
+ */
+export const obtenerDiaRitualCaso = (sdate, time) => {
+    if (!sdate) return null;
+
+    let y, m, d;
+    if (sdate instanceof Date) {
+        y = sdate.getFullYear();
+        m = sdate.getMonth() + 1;
+        d = sdate.getDate();
+    } else {
+        const [yStr, mStr, dStr] = sdate.split('-');
+        y = parseInt(yStr);
+        m = parseInt(mStr);
+        d = parseInt(dStr);
+    }
+
+    // Si no se selecciona hora, se toma por defecto 12:00 pm
+    let h = 12;
+    let min = 0;
+    if (time) {
+        const [hStr, minStr] = time.split(':');
+        h = parseInt(hStr);
+        min = parseInt(minStr);
+    }
+
+    const targetDate = new Date(y, m - 1, d, h, min, 0, 0);
+
+    // Funciones auxiliares para el cálculo del inicio de año según Caso
+    const refInicioAnio = new Date(1521, 0, 24, 12, 0, 0);
+    const contarBisiestosLocal = (y1, y2) => {
+        let count = 0;
+        const minYear = Math.min(y1, y2);
+        const maxYear = Math.max(y1, y2);
+        for (let yr = minYear; yr < maxYear; yr++) {
+            if (bisiestoAnio(yr)) {
+                count++;
+            }
+        }
+        return count;
+    };
+
+    const obtenerInicioAñoLocal = (year) => {
+        const fechaInicio = new Date(refInicioAnio.getTime());
+        fechaInicio.setFullYear(year);
+        if (year > 1521) {
+            const bisiestos = contarBisiestosLocal(1521, year);
+            fechaInicio.setDate(fechaInicio.getDate() - bisiestos);
+        } else if (year < 1521) {
+            const bisiestos = contarBisiestosLocal(year, 1521);
+            fechaInicio.setDate(fechaInicio.getDate() + bisiestos);
+        } else {
+            fechaInicio.setDate(24);
+        }
+        if (year > 1582) {
+            fechaInicio.setDate(fechaInicio.getDate() + 10);
+        }
+        fechaInicio.setHours(12, 0, 0, 0);
+        return fechaInicio;
+    };
+
+    // Determinar a qué año Xihuitl pertenece la fecha seleccionada
+    const currentAño = targetDate.getFullYear();
+    const inicioAñoNext = obtenerInicioAñoLocal(currentAño + 1);
+    const inicioAñoCurr = obtenerInicioAñoLocal(currentAño);
+
+    let xihuitlYear = currentAño;
+    let fechaInicioAñoSelected = inicioAñoCurr;
+
+    if (targetDate >= inicioAñoNext) {
+        xihuitlYear = currentAño + 1;
+        fechaInicioAñoSelected = inicioAñoNext;
+    } else if (targetDate < inicioAñoCurr) {
+        xihuitlYear = currentAño - 1;
+        fechaInicioAñoSelected = obtenerInicioAñoLocal(xihuitlYear);
+    } else {
+        xihuitlYear = currentAño;
+        fechaInicioAñoSelected = inicioAñoCurr;
+    }
+
+    // Año dentro del bloque de 52 años (1 a 52) tomando como referencia el año 2-Caña (1507)
+    let yearInBlock = ((xihuitlYear - 1507) % 52);
+    if (yearInBlock < 0) yearInBlock += 52;
+    yearInBlock += 1;
+
+    // Ajuste de hora: los días en Caso inician a las 12:00 pm.
+    // Si la hora es menor a las 12:00 pm, pertenece al día ritual que inició a las 12:00 pm del día anterior civil.
+    let effectiveTarget = new Date(targetDate.getTime());
+    if (h < 12) {
+        effectiveTarget.setDate(effectiveTarget.getDate() - 1);
+    }
+    effectiveTarget.setHours(12, 0, 0, 0);
+
+    // Calcular días transcurridos tomando en cuenta el cambio Juliano a Gregoriano (1582) y bisiestos
+    const calcularDiasEntreLocal = (dInicio, dFin) => {
+        if (dFin < dInicio) return 0;
+        if (dInicio.getFullYear() === dFin.getFullYear() &&
+            dInicio.getMonth() === dFin.getMonth() &&
+            dInicio.getDate() === dFin.getDate()) {
+            return 0;
+        }
+        let dias = 0;
+        const y1 = dInicio.getFullYear();
+        const y2 = dFin.getFullYear();
+        for (let yr = y1; yr < y2; yr++) {
+            dias += bisiestoAnio(yr) ? 366 : 365;
+        }
+        for (let mo = 0; mo < dInicio.getMonth(); mo++) {
+            dias -= getDiasMonth(y1, mo);
+        }
+        dias -= dInicio.getDate();
+        for (let mo = 0; mo < dFin.getMonth(); mo++) {
+            dias += getDiasMonth(y2, mo);
+        }
+        dias += dFin.getDate();
+        const fechaCambioA = new Date(1582, 9, 4, 12, 0, 0);
+        const fechaCambioB = new Date(1582, 9, 15, 12, 0, 0);
+        if (dInicio <= fechaCambioA && dFin >= fechaCambioB) {
+            dias -= 10;
+        }
+        return dias;
+    };
+
+    let diffDays = calcularDiasEntreLocal(fechaInicioAñoSelected, effectiveTarget);
+    if (diffDays < 0) diffDays = 0;
+    if (diffDays >= 365) diffDays = 364;
+
+    // Cálculo del día final dentro del ciclo de 18,980 días
+    const finalDay = ((yearInBlock - 1) * 365) + diffDays + 1;
+
+    // Formateo de resultados
+    const isJuliano = targetDate < new Date(1582, 9, 15);
+    const opcionFechaFormat = { day: 'numeric', month: 'long', year: 'numeric' };
+    const startTime = `${fechaInicioAñoSelected.toLocaleDateString('es-MX', opcionFechaFormat)}, 12:00 pm`;
+    const ampm = h >= 12 ? 'p.m.' : 'a.m.';
+    const h12 = h % 12 || 12;
+    const usedTime = `${h12}:${min < 10 ? '0' + min : min} ${ampm}`;
+
+    return {
+        day: finalDay,
+        year: yearInBlock,
+        cal: isJuliano ? "Juliano" : "Gregoriano",
+        startTime: startTime,
+        usedTime: usedTime
+    };
+};
+
 //CUENTA MEZA
 
 /**
