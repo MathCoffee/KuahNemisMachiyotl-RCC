@@ -18,124 +18,32 @@ const Plot = createPlotlyComponent(Plotly);
 import toroData from '../data/toroData.json'; */
 // Importar el archivo Python como texto plano usando '?raw' de Vite
 //import pythonCode from '../python/toro_animacion_3d_v3.6.py?raw';
-import { getImagePath } from '../funtions/funtions';
+import {
+    getImagePath,
+    RUMBO_COLORS,
+    TRACE_KEYS,
+    surfaceTrace,
+    getSlidersSteps,
+    buildCatContainers,
+    getRumboSegments as _getRumboSegments
+} from '../funtions/funtions';
 import 'bootstrap/dist/css/bootstrap.min.css';
 //import '../styles/Toro.css';
 
-// Mapeo de colores estéticos por rumbo de Trecena para los trazos segmentados
-const RUMBO_COLORS = {
-    tlahuiztlanpa: '#F1C40F', // Oriente / Amarillo
-    huitztlanpa: '#0984E3',    // Sur / Azul
-    cihuatlanpa: '#D63031',    // Poniente / Rojo
-    mictlanpa: '#7F8C8D',      // Norte / Gris
-    base: '#64748B'            // Regular / Gris Base'
-};
-const TRACE_KEYS = ['base', 'familia_q_1', 'tlahuiztlanpa', 'huitztlanpa', 'cihuatlanpa', 'mictlanpa'];
-
-// Generación estática de la superficie del Toro (Traza 0)
-const R_major = 5;
-const r_minor = 1.5;
-const u_arr = Array.from({ length: 40 }, (_, i) => (2 * Math.PI * i) / 39);
-const v_arr = Array.from({ length: 40 }, (_, i) => (2 * Math.PI * i) / 39);
-
-let x_surf = [], y_surf = [], z_surf = [];
-for (let i = 0; i < v_arr.length; i++) {
-    let x_row = [], y_row = [], z_row = [];
-    for (let j = 0; j < u_arr.length; j++) {
-        x_row.push((R_major + r_minor * Math.cos(u_arr[j])) * Math.cos(v_arr[i]));
-        y_row.push((R_major + r_minor * Math.cos(u_arr[j])) * Math.sin(v_arr[i]));
-        z_row.push(r_minor * Math.sin(u_arr[j]));
-    }
-    x_surf.push(x_row); y_surf.push(y_row); z_surf.push(z_row);
-}
-
-const surfaceTrace = {
-    type: 'surface',
-    x: x_surf, y: y_surf, z: z_surf,
-    opacity: 0.12,
-    colorscale: 'Jet',
-    showscale: false,
-    hoverinfo: 'skip'
-};
-
 // Pasos estáticos para el slider inferior de Plotly
-const slidersSteps = toroData.trajectory.map((_, i) => ({
-    label: (i + 1).toString(),
-    method: 'skip'
-}));
+const slidersSteps = getSlidersSteps(toroData.trajectory);
 
 // ============================================================================
 // OPTIMIZACIÓN: catContainers se construye UNA SOLA VEZ al cargar el módulo.
 // Moverlo aquí evita recalcular los ~260 puntos en cada re-render de React,
 // lo que causaba llamadas innecesarias a Plotly.react() y congelamientos.
 // ============================================================================
-const catContainers = {
-    base: { x: [], y: [], z: [], text_num: [], text_img: [], hover: [], n: [], size: 5, color: '#94A3B8', symbol: 'circle', name: 'Día Regular' },
-    familia_q_1: { x: [], y: [], z: [], text_num: [], text_img: [], hover: [], n: [], size: 7, color: '#00B5B5', symbol: 'diamond', name: 'Inicio Veintena' },
-    tlahuiztlanpa: { x: [], y: [], z: [], text_num: [], text_img: [], hover: [], n: [], size: 9, color: RUMBO_COLORS.tlahuiztlanpa, symbol: 'circle', name: 'Tlahuiztlanpa (Oriente)' },
-    huitztlanpa: { x: [], y: [], z: [], text_num: [], text_img: [], hover: [], n: [], size: 9, color: RUMBO_COLORS.huitztlanpa, symbol: 'circle', name: 'Huitztlanpa (Sur)' },
-    cihuatlanpa: { x: [], y: [], z: [], text_num: [], text_img: [], hover: [], n: [], size: 9, color: RUMBO_COLORS.cihuatlanpa, symbol: 'circle', name: 'Cihuatlanpa (Poniente)' },
-    mictlanpa: { x: [], y: [], z: [], text_num: [], text_img: [], hover: [], n: [], size: 9, color: RUMBO_COLORS.mictlanpa, symbol: 'circle', name: 'Mictlanpa (Norte)' }
-};
-// Distribuir la data geométrica dentro de las 6 categorías estructurales (una sola vez al cargar el módulo)
-toroData.trajectory.forEach((t) => {
-    const pt = toroData.points[t.n];
-    const container = catContainers[pt.classKey] || catContainers.base;
-    container.x.push(t.x); container.y.push(t.y); container.z.push(t.z); container.n.push(t.n);
-    container.text_num.push(`(${pt.q},${pt.r})`);
-    container.text_img.push(`${pt.numeral}-${pt.symName}`);
-    container.hover.push(`Día n=${t.n}<br>Tonal: ${pt.numeral} ${pt.symName}<br>Coord: (${pt.q},${pt.r})`);
-});
+const catContainers = buildCatContainers(toroData);
 
 // --- COMPONENTE LÓGICO CON CAMBIO DE COLOR EXACTO EN EL VÉRTICE ---
 // --- NUEVA LOGICA: TRAZAS DE TRAYECTORIA SEPARADAS POR RUMBO (ELIMINA DEGRADADOS) ---
-const getRumboSegments = (maxDay) => {
-    const segments = { tlahuiztlanpa: [], huitztlanpa: [], cihuatlanpa: [], mictlanpa: [] };
-    const activeTrajectory = toroData.trajectory.slice(0, maxDay);
-
-    let currentRumbo = null;
-
-    // 1. Encontrar el rumbo inicial real de la trayectoria activa
-    for (let i = 0; i < activeTrajectory.length; i++) {
-        const pt = toroData.points[activeTrajectory[i].n];
-        if (pt && ['tlahuiztlanpa', 'huitztlanpa', 'cihuatlanpa', 'mictlanpa'].includes(pt.classKey)) {
-            currentRumbo = pt.classKey;
-            break;
-        }
-    }
-    if (!currentRumbo) currentRumbo = 'tlahuiztlanpa';
-
-    // 2. Construir trayectorias insertando rupturas nulas (null) para levantar el lápiz de Plotly
-    for (let i = 0; i < activeTrajectory.length; i++) {
-        const t = activeTrajectory[i];
-        const pt = toroData.points[t.n];
-
-        if (pt && ['tlahuiztlanpa', 'huitztlanpa', 'cihuatlanpa', 'mictlanpa'].includes(pt.classKey)) {
-
-            // Si hay un cambio de rumbo auténtico
-            if (pt.classKey !== currentRumbo) {
-                // A) Cerramos de forma exacta el vértice en el rumbo anterior
-                if (segments[currentRumbo] && segments[currentRumbo].length > 0) {
-                    segments[currentRumbo].push(t);
-
-                    // B) ¡SOLUCIÓN CRUCIAL!: Insertamos un nodo null en el rumbo que se apaga.
-                    // Esto le dice a Plotly: "Cuando este color vuelva a abrirse en el futuro, NO lo unas con este punto".
-                    segments[currentRumbo].push({ x: null, y: null, z: null, n: null });
-                }
-
-                // Cambiamos al nuevo rumbo
-                currentRumbo = pt.classKey;
-            }
-        }
-
-        // Añadimos el punto al rumbo que está corriendo actualmente
-        if (segments[currentRumbo]) {
-            segments[currentRumbo].push(t);
-        }
-    }
-
-    return segments;
-};
+// Wrapper local que mantiene la firma original de un argumento, pasando toroData internamente
+const getRumboSegments = (maxDay) => _getRumboSegments(maxDay, toroData);
 
 const Toro = () => {
     const { theme } = useTheme();
@@ -533,31 +441,39 @@ const Toro = () => {
             }
         });
         // === CAPTURA DE INTERACCIÓN DE ALTA SENSIBILIDAD ===
-        const glContainer = el.querySelector('.glcontainer');
-        if (glContainer) {
+        const targetContainer = el.querySelector('.gl-container') || el.querySelector('canvas') || el;
+        if (targetContainer) {
             // Captura inicio de rotación o arrastre
-            glContainer.onmousedown = () => {
+            targetContainer.onmousedown = () => {
                 isUserInteractingRef.current = true;
-            };
-
-            // Captura zoom con la rueda del mouse de forma inmediata
-            glContainer.onwheel = () => {
-                isUserInteractingRef.current = true;
-                // Pequeño timeout para volver a habilitar la animación cuando dejes de usar la rueda
-                clearTimeout(glContainer.wheelTimeout);
-                glContainer.wheelTimeout = setTimeout(() => {
-                    isUserInteractingRef.current = false;
-                }, 150);
             };
 
             // Liberación del control
-            glContainer.onmouseup = () => {
+            targetContainer.onmouseup = () => {
                 isUserInteractingRef.current = false;
             };
-            glContainer.onmouseleave = () => {
+            targetContainer.onmouseleave = () => {
                 isUserInteractingRef.current = false;
             };
         }
+
+        // Captura zoom con la rueda del mouse solo si la herramienta de zoom está activa
+        const handleWheelCapture = (e) => {
+            const currentDragmode = el._fullLayout?.scene?.dragmode || el.layout?.scene?.dragmode;
+            if (currentDragmode !== 'zoom') {
+                e.stopImmediatePropagation();
+                e.preventDefault();
+                return;
+            }
+            isUserInteractingRef.current = true;
+            clearTimeout(el._wheelTimeout);
+            el._wheelTimeout = setTimeout(() => {
+                isUserInteractingRef.current = false;
+            }, 150);
+        };
+        el.removeEventListener('wheel', el._wheelCaptureHandler, true);
+        el._wheelCaptureHandler = handleWheelCapture;
+        el.addEventListener('wheel', handleWheelCapture, true);
     };
     // ============================================================================
     // 4. CONSTRUCCIÓN DE LAS TRAZAS ESTRUCTURALES DEL ENTORNO

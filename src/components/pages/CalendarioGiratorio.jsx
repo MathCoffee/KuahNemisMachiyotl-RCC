@@ -1,71 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { getImagePath } from '../funtions/funtions';
+import {
+    getImagePath,
+    SEGDATOS_VEINTENAS,
+    SEGDATOS_VEINTENASCaso,
+    describirArcoInteractivo,
+    numberM,
+    signos
+} from '../funtions/funtions';
 import { useTheme } from '../../context/ThemeContext';
 
-// 18 veintenas (20 días) + 1 Nemontemi (5 días) = 365 días en total
-const SEGDATOS_VEINTENAS = [
-    { id: 'Atlacahualo', dias: 20 },
-    { id: 'Tlacaxipehualiztli', dias: 20 },
-    { id: 'Tozoztontli', dias: 20 },
-    { id: 'Ueitozoztli', dias: 20 },
-    { id: 'Toxcatl', dias: 20 },
-    { id: 'Etzalcualiztli', dias: 20 },
-    { id: 'Tecuilhuitontli', dias: 20 },
-    { id: 'Ueitecuilhuitl', dias: 20 },
-    { id: 'Tlaxochimaco', dias: 20 },
-    { id: 'Xocotl Uetzi', dias: 20 },
-    { id: 'Ochpaniztli', dias: 20 },
-    { id: 'Teotlehco', dias: 20 },
-    { id: 'Tepeilhuitl', dias: 20 },
-    { id: 'Quecholli', dias: 20 },
-    { id: 'Panquetzaliztli', dias: 20 },
-    { id: 'Atemoztli', dias: 20 },
-    { id: 'Tititl', dias: 20 },
-    { id: 'Izcalli', dias: 20 },
-    { id: 'Nemontemi', dias: 5 },
-];
-// 18 veintenas (20 días) + 1 Nemontemi (5 días) = 365 días en total
-const SEGDATOS_VEINTENASCaso = [
-    { id: 'Izcalli', dias: 20 },
-    { id: 'Atlacahualo', dias: 20 },
-    { id: 'Tlacaxipehualiztli', dias: 20 },
-    { id: 'Tozoztontli', dias: 20 },
-    { id: 'Ueitozoztli', dias: 20 },
-    { id: 'Toxcatl', dias: 20 },
-    { id: 'Etzalcualiztli', dias: 20 },
-    { id: 'Tecuilhuitontli', dias: 20 },
-    { id: 'Ueitecuilhuitl', dias: 20 },
-    { id: 'Tlaxochimaco', dias: 20 },
-    { id: 'Xocotl Uetzi', dias: 20 },
-    { id: 'Ochpaniztli', dias: 20 },
-    { id: 'Teotlehco', dias: 20 },
-    { id: 'Tepeilhuitl', dias: 20 },
-    { id: 'Quecholli', dias: 20 },
-    { id: 'Panquetzaliztli', dias: 20 },
-    { id: 'Atemoztli', dias: 20 },
-    { id: 'Tititl', dias: 20 },
-    { id: 'Nemontemi', dias: 5 },
-];
-// Función matemática para describir los arcos de las máscaras interactivas
-const describirArcoInteractivo = (x, y, radioInt, radioExt, anguloInicio, anguloFin) => {
-    const gradRad = (g) => (g - 90) * Math.PI / 180.0;
-
-    const extInicio = { x: x + radioExt * Math.cos(gradRad(anguloInicio)), y: y + radioExt * Math.sin(gradRad(anguloInicio)) };
-    const extFin = { x: x + radioExt * Math.cos(gradRad(anguloFin)), y: y + radioExt * Math.sin(gradRad(anguloFin)) };
-
-    const intInicio = { x: x + radioInt * Math.cos(gradRad(anguloInicio)), y: y + radioInt * Math.sin(gradRad(anguloInicio)) };
-    const intFin = { x: x + radioInt * Math.cos(gradRad(anguloFin)), y: y + radioInt * Math.sin(gradRad(anguloFin)) };
-
-    const grande = (anguloFin - anguloInicio) <= 180 ? "0" : "1";
-
-    return [
-        "M", extInicio.x, extInicio.y,
-        "A", radioExt, radioExt, 0, grande, 1, extFin.x, extFin.y,
-        "L", intFin.x, intFin.y,
-        "A", radioInt, radioInt, 0, grande, 0, intInicio.x, intInicio.y,
-        "Z"
-    ].join(" ");
-};
 const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliDia, veintenaCaso, tipo = 'meza' }) => {
     const isCaso = tipo === 'caso';
 
@@ -119,8 +62,6 @@ const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliD
     const angleVeintenas = 0;
 
     // Engrane 13: Gira a la derecha (CW). 195px.
-    const numberM = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"];
-
     const numeroT = isCaso
         ? (tonalliDia ? tonalliDia.numero.español : "1")
         : (tonalliDiaMeza ? tonalliDiaMeza.numeroT.español : "1");
@@ -129,13 +70,6 @@ const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliD
     const angle13 = activeTonalli ? 352.5 + (numeroIndex * (360 / 13)) : 0;
 
     // Engrane 20: Gira a la izquierda (CCW). 300px.
-    const signos = [
-        "Lagarto", "Viento", "Casa", "Lagartija", "Serpiente",
-        "Muerte", "Venado", "Conejo", "Agua", "Perro",
-        "Mono", "Hierba", "Caña", "Jaguar", "Águila",
-        "Zopilote", "Movimiento", "Pedernal", "Lluvia", "Flor"
-    ];
-
     const signoName = isCaso
         ? (tonalliDia ? tonalliDia.simbolo.español : "Lagarto")
         : (tonalliDiaMeza ? tonalliDiaMeza.signoT.español : "Lagarto");

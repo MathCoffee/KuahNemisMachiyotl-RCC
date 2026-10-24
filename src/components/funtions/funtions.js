@@ -1271,3 +1271,207 @@ export const getCellClass = (cell, featuredCells, revNumbers) => {
     return '';
 };
 
+// ============================================================================
+// FUNCIONES Y CONSTANTES PARA CALENDARIO GIRATORIO
+// ============================================================================
+
+// 18 veintenas (20 días) + 1 Nemontemi (5 días) = 365 días en total
+export const SEGDATOS_VEINTENAS = [
+    { id: 'Atlacahualo', dias: 20 },
+    { id: 'Tlacaxipehualiztli', dias: 20 },
+    { id: 'Tozoztontli', dias: 20 },
+    { id: 'Ueitozoztli', dias: 20 },
+    { id: 'Toxcatl', dias: 20 },
+    { id: 'Etzalcualiztli', dias: 20 },
+    { id: 'Tecuilhuitontli', dias: 20 },
+    { id: 'Ueitecuilhuitl', dias: 20 },
+    { id: 'Tlaxochimaco', dias: 20 },
+    { id: 'Xocotl Uetzi', dias: 20 },
+    { id: 'Ochpaniztli', dias: 20 },
+    { id: 'Teotlehco', dias: 20 },
+    { id: 'Tepeilhuitl', dias: 20 },
+    { id: 'Quecholli', dias: 20 },
+    { id: 'Panquetzaliztli', dias: 20 },
+    { id: 'Atemoztli', dias: 20 },
+    { id: 'Tititl', dias: 20 },
+    { id: 'Izcalli', dias: 20 },
+    { id: 'Nemontemi', dias: 5 },
+];
+
+// 18 veintenas (20 días) + 1 Nemontemi (5 días) = 365 días en total
+export const SEGDATOS_VEINTENASCaso = [
+    { id: 'Izcalli', dias: 20 },
+    { id: 'Atlacahualo', dias: 20 },
+    { id: 'Tlacaxipehualiztli', dias: 20 },
+    { id: 'Tozoztontli', dias: 20 },
+    { id: 'Ueitozoztli', dias: 20 },
+    { id: 'Toxcatl', dias: 20 },
+    { id: 'Etzalcualiztli', dias: 20 },
+    { id: 'Tecuilhuitontli', dias: 20 },
+    { id: 'Ueitecuilhuitl', dias: 20 },
+    { id: 'Tlaxochimaco', dias: 20 },
+    { id: 'Xocotl Uetzi', dias: 20 },
+    { id: 'Ochpaniztli', dias: 20 },
+    { id: 'Teotlehco', dias: 20 },
+    { id: 'Tepeilhuitl', dias: 20 },
+    { id: 'Quecholli', dias: 20 },
+    { id: 'Panquetzaliztli', dias: 20 },
+    { id: 'Atemoztli', dias: 20 },
+    { id: 'Tititl', dias: 20 },
+    { id: 'Nemontemi', dias: 5 },
+];
+
+// Función matemática para describir los arcos de las máscaras interactivas
+export const describirArcoInteractivo = (x, y, radioInt, radioExt, anguloInicio, anguloFin) => {
+    const gradRad = (g) => (g - 90) * Math.PI / 180.0;
+
+    const extInicio = { x: x + radioExt * Math.cos(gradRad(anguloInicio)), y: y + radioExt * Math.sin(gradRad(anguloInicio)) };
+    const extFin = { x: x + radioExt * Math.cos(gradRad(anguloFin)), y: y + radioExt * Math.sin(gradRad(anguloFin)) };
+
+    const intInicio = { x: x + radioInt * Math.cos(gradRad(anguloInicio)), y: y + radioInt * Math.sin(gradRad(anguloInicio)) };
+    const intFin = { x: x + radioInt * Math.cos(gradRad(anguloFin)), y: y + radioInt * Math.sin(gradRad(anguloFin)) };
+
+    const grande = (anguloFin - anguloInicio) <= 180 ? "0" : "1";
+
+    return [
+        "M", extInicio.x, extInicio.y,
+        "A", radioExt, radioExt, 0, grande, 1, extFin.x, extFin.y,
+        "L", intFin.x, intFin.y,
+        "A", radioInt, radioInt, 0, grande, 0, intInicio.x, intInicio.y,
+        "Z"
+    ].join(" ");
+};
+
+// Engrane 13: Gira a la derecha (CW). 195px.
+export const numberM = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"];
+
+// Engrane 20: Gira a la izquierda (CCW). 300px.
+export const signos = [
+    "Lagarto", "Viento", "Casa", "Lagartija", "Serpiente",
+    "Muerte", "Venado", "Conejo", "Agua", "Perro",
+    "Mono", "Hierba", "Caña", "Jaguar", "Águila",
+    "Zopilote", "Movimiento", "Pedernal", "Lluvia", "Flor"
+];
+
+// ============================================================================
+// CONSTANTES Y FUNCIONES PARA TORO 3D
+// ============================================================================
+
+// Mapeo de colores estéticos por rumbo de Trecena para los trazos segmentados
+export const RUMBO_COLORS = {
+    tlahuiztlanpa: '#F1C40F', // Oriente / Amarillo
+    huitztlanpa: '#0984E3',    // Sur / Azul
+    cihuatlanpa: '#D63031',    // Poniente / Rojo
+    mictlanpa: '#7F8C8D',      // Norte / Gris
+    base: '#64748B'            // Regular / Gris Base'
+};
+export const TRACE_KEYS = ['base', 'familia_q_1', 'tlahuiztlanpa', 'huitztlanpa', 'cihuatlanpa', 'mictlanpa'];
+
+// Generación estática de la superficie del Toro (Traza 0)
+const R_major = 5;
+const r_minor = 1.5;
+const u_arr = Array.from({ length: 40 }, (_, i) => (2 * Math.PI * i) / 39);
+const v_arr = Array.from({ length: 40 }, (_, i) => (2 * Math.PI * i) / 39);
+
+let x_surf = [], y_surf = [], z_surf = [];
+for (let i = 0; i < v_arr.length; i++) {
+    let x_row = [], y_row = [], z_row = [];
+    for (let j = 0; j < u_arr.length; j++) {
+        x_row.push((R_major + r_minor * Math.cos(u_arr[j])) * Math.cos(v_arr[i]));
+        y_row.push((R_major + r_minor * Math.cos(u_arr[j])) * Math.sin(v_arr[i]));
+        z_row.push(r_minor * Math.sin(u_arr[j]));
+    }
+    x_surf.push(x_row); y_surf.push(y_row); z_surf.push(z_row);
+}
+
+export const surfaceTrace = {
+    type: 'surface',
+    x: x_surf, y: y_surf, z: z_surf,
+    opacity: 0.12,
+    colorscale: 'Jet',
+    showscale: false,
+    hoverinfo: 'skip'
+};
+
+// Pasos estáticos para el slider inferior de Plotly
+export const getSlidersSteps = (trajectory) => trajectory.map((_, i) => ({
+    label: (i + 1).toString(),
+    method: 'skip'
+}));
+
+// ============================================================================
+// OPTIMIZACIÓN: buildCatContainers construye y llena los contenedores UNA SOLA VEZ.
+// Moverlo aquí evita recalcular los ~260 puntos en cada re-render de React,
+// lo que causaba llamadas innecesarias a Plotly.react() y congelamientos.
+// ============================================================================
+export const buildCatContainers = (toroData) => {
+    const containers = {
+        base: { x: [], y: [], z: [], text_num: [], text_img: [], hover: [], n: [], size: 5, color: '#94A3B8', symbol: 'circle', name: 'Día Regular' },
+        familia_q_1: { x: [], y: [], z: [], text_num: [], text_img: [], hover: [], n: [], size: 7, color: '#00B5B5', symbol: 'diamond', name: 'Inicio Veintena' },
+        tlahuiztlanpa: { x: [], y: [], z: [], text_num: [], text_img: [], hover: [], n: [], size: 9, color: RUMBO_COLORS.tlahuiztlanpa, symbol: 'circle', name: 'Tlahuiztlanpa (Oriente)' },
+        huitztlanpa: { x: [], y: [], z: [], text_num: [], text_img: [], hover: [], n: [], size: 9, color: RUMBO_COLORS.huitztlanpa, symbol: 'circle', name: 'Huitztlanpa (Sur)' },
+        cihuatlanpa: { x: [], y: [], z: [], text_num: [], text_img: [], hover: [], n: [], size: 9, color: RUMBO_COLORS.cihuatlanpa, symbol: 'circle', name: 'Cihuatlanpa (Poniente)' },
+        mictlanpa: { x: [], y: [], z: [], text_num: [], text_img: [], hover: [], n: [], size: 9, color: RUMBO_COLORS.mictlanpa, symbol: 'circle', name: 'Mictlanpa (Norte)' }
+    };
+    // Distribuir la data geométrica dentro de las 6 categorías estructurales (una sola vez al cargar el módulo)
+    toroData.trajectory.forEach((t) => {
+        const pt = toroData.points[t.n];
+        const container = containers[pt.classKey] || containers.base;
+        container.x.push(t.x); container.y.push(t.y); container.z.push(t.z); container.n.push(t.n);
+        container.text_num.push(`(${pt.q},${pt.r})`);
+        container.text_img.push(`${pt.numeral}-${pt.symName}`);
+        container.hover.push(`Día n=${t.n}<br>Tonal: ${pt.numeral} ${pt.symName}<br>Coord: (${pt.q},${pt.r})`);
+    });
+    return containers;
+};
+
+// --- COMPONENTE LÓGICO CON CAMBIO DE COLOR EXACTO EN EL VÉRTICE ---
+// --- NUEVA LOGICA: TRAZAS DE TRAYECTORIA SEPARADAS POR RUMBO (ELIMINA DEGRADADOS) ---
+export const getRumboSegments = (maxDay, toroData) => {
+    const segments = { tlahuiztlanpa: [], huitztlanpa: [], cihuatlanpa: [], mictlanpa: [] };
+    const activeTrajectory = toroData.trajectory.slice(0, maxDay);
+
+    let currentRumbo = null;
+
+    // 1. Encontrar el rumbo inicial real de la trayectoria activa
+    for (let i = 0; i < activeTrajectory.length; i++) {
+        const pt = toroData.points[activeTrajectory[i].n];
+        if (pt && ['tlahuiztlanpa', 'huitztlanpa', 'cihuatlanpa', 'mictlanpa'].includes(pt.classKey)) {
+            currentRumbo = pt.classKey;
+            break;
+        }
+    }
+    if (!currentRumbo) currentRumbo = 'tlahuiztlanpa';
+
+    // 2. Construir trayectorias insertando rupturas nulas (null) para levantar el lápiz de Plotly
+    for (let i = 0; i < activeTrajectory.length; i++) {
+        const t = activeTrajectory[i];
+        const pt = toroData.points[t.n];
+
+        if (pt && ['tlahuiztlanpa', 'huitztlanpa', 'cihuatlanpa', 'mictlanpa'].includes(pt.classKey)) {
+
+            // Si hay un cambio de rumbo auténtico
+            if (pt.classKey !== currentRumbo) {
+                // A) Cerramos de forma exacta el vértice en el rumbo anterior
+                if (segments[currentRumbo] && segments[currentRumbo].length > 0) {
+                    segments[currentRumbo].push(t);
+
+                    // B) ¡SOLUCIÓN CRUCIAL!: Insertamos un nodo null en el rumbo que se apaga.
+                    // Esto le dice a Plotly: "Cuando este color vuelva a abrirse en el futuro, NO lo unas con este punto".
+                    segments[currentRumbo].push({ x: null, y: null, z: null, n: null });
+                }
+
+                // Cambiamos al nuevo rumbo
+                currentRumbo = pt.classKey;
+            }
+        }
+
+        // Añadimos el punto al rumbo que está corriendo actualmente
+        if (segments[currentRumbo]) {
+            segments[currentRumbo].push(t);
+        }
+    }
+
+    return segments;
+};
+
