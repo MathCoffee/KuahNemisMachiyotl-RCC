@@ -1,12 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import {
-    getImagePath,
-    SEGDATOS_VEINTENAS,
-    SEGDATOS_VEINTENASCaso,
-    describirArcoInteractivo,
-    numberM,
-    signos
-} from '../funtions/funtions';
+import { getImagePath, SEGDATOS_VEINTENAS, SEGDATOS_VEINTENASCaso, describirArcoInteractivo, numberM, signos } from '../funtions/funtions';
 import { useTheme } from '../../context/ThemeContext';
 
 const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliDia, veintenaCaso, tipo = 'meza' }) => {

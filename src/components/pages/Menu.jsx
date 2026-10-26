@@ -39,10 +39,10 @@ const Menu = () => {
                   <Link className={`nav-link ${isActive('/tablero') ? 'active' : ''}`} to="/tablero">TABLERO{isActive('/tablero') && <span className="visually-hidden">(actual)</span>}</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className={`nav-link ${isActive('/toro') ? 'active' : ''}`} to="/toro">TORO{isActive('/toro') && <span className="visually-hidden">(actual)</span>}</Link>
+                  <Link className={`nav-link ${isActive('/calculadora') ? 'active' : ''}`} to="/calculadora">CALCULADORA{isActive('/calculadora') && <span className="visually-hidden">(actual)</span>}</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className={`nav-link ${isActive('/calculadora') ? 'active' : ''}`} to="/calculadora">CALCULADORA{isActive('/calculadora') && <span className="visually-hidden">(actual)</span>}</Link>
+                  <Link className={`nav-link ${isActive('/toro') ? 'active' : ''}`} to="/toro">TORO{isActive('/toro') && <span className="visually-hidden">(actual)</span>}</Link>
                 </li>
               </ul>
             </Nav>

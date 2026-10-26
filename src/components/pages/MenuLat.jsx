@@ -13,8 +13,8 @@ const MenuLat = () => {
         { path: '/conversor', label: 'CONVERSOR' },
         { path: '/inverso', label: 'INVERSO' },
         { path: '/tablero', label: 'TABLERO' },
-        { path: '/toro', label: 'TORO' },
-        { path: '/calculadora', label: 'CALCULADORA' }
+        { path: '/calculadora', label: 'CALCULADORA' },
+        { path: '/toro', label: 'TORO' }
     ]
 
     return (
@@ -93,7 +93,7 @@ const MenuLat = () => {
                 }}
             >
                 <div style={{ marginBottom: '24px', paddingLeft: '8px' }}>
-                    <span style={{ fontSize: '10px', color: isDark ? '#29394fff' : '#38BDF8', fontWeight: '800', letterSpacing: '1.5px', textTransform: 'uppercase' }}>MENÚ PRINCIPAL</span>
+                    <span style={{ fontSize: '10px', color: isDark ? '#29394fff' : '#38BDF8', fontWeight: '800', letterSpacing: '1.5px', textTransform: 'uppercase' }}>MENÚ</span>
                 </div>
 
                 <nav style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
