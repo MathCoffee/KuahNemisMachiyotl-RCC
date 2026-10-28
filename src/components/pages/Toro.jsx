@@ -279,7 +279,7 @@ const Toro = () => {
                 ],
                 text: [null, null, null, null, [textLabel]],
                 // AGREGA ESTA LÍNEA para el tamaño del texto del marcador rojo en movimiento:
-                'textfont.size': [null, null, null, null, [representationRef.current === 'numeros' ? 14 : 16]]
+                'textfont.size': [null, null, null, null, [representationRef.current === 'numeros' ? 28 : 16]]
             }, [7, 8, 9, 10, 11]);
 
             layoutRef.current.sliders[0].active = targetDay - 1;
@@ -425,7 +425,7 @@ const Toro = () => {
                     updatedData[11] = {
                         ...updatedData[11], x: [[currentPt.x]], y: [[currentPt.y]], z: [[currentPt.z]], text: [[textLabel]],
                         // AGREGA ESTA PROPIEDAD:
-                        textfont: { ...updatedData[11].textfont, size: representationRef.current === 'numeros' ? 14 : 16 }
+                        textfont: { ...updatedData[11].textfont, size: representationRef.current === 'numeros' ? 28 : 16 }
                     };
 
                     Plotly.react(el, updatedData, layoutRef.current);
@@ -502,7 +502,7 @@ const Toro = () => {
                 color: textColor,
                 //size: 11,
                 size: currentRepresentation === 'numeros'
-                    ? (['base', 'familia_q_1'].includes(cat_key) ? 14 : 14)
+                    ? (['base', 'familia_q_1'].includes(cat_key) ? 28 : 28)
                     : (['base', 'familia_q_1'].includes(cat_key) ? 16 : 16),
                 family: 'Arial, sans-serif'
             },
@@ -537,7 +537,7 @@ const Toro = () => {
         marker: { size: 10, color: '#EF4444', symbol: 'circle', line: { color: '#FFFFFF', width: 1.5 } },
         text: [currentRepresentation === 'numeros' ? `(${initialMeta.q},${initialMeta.r})` : `${initialMeta.numeral}-${initialMeta.symName}`],
         textposition: 'top center',
-        textfont: { color: '#022249ff', size: currentRepresentation === 'numeros' ? 14 : 16, family: 'Arial, sans-serif' },
+        textfont: { color: '#022249ff', size: currentRepresentation === 'numeros' ? 28 : 16, family: 'Arial, sans-serif' },
         name: 'Generador Activo',
         hoverinfo: 'skip'
     };
@@ -571,7 +571,7 @@ const Toro = () => {
                 const updatedLabel = mode === 'numeros' ? `(${currentMeta.q},${currentMeta.r})` : `${currentMeta.numeral}-${currentMeta.symName}`;
                 Plotly.restyle(plotDiv, {
                     text: [[updatedLabel]],
-                    'textfont.size': mode === 'numeros' ? 14 : 16
+                    'textfont.size': mode === 'numeros' ? 28 : 16
                 }, [11]);
             }
         }
@@ -682,7 +682,7 @@ const Toro = () => {
                     top: '10px',         // Alineado con la altura por defecto del ModeBar
                     right: '240px',      // Ajusta esta distancia según el ancho de los botones de             tu ModeBar
                     zIndex: 10,          // Por encima del canvas de WebGL
-                    fontSize: '11px',
+                    fontSize: '13px',
                     color: '#64748B',    // Color Slate intermedio
                     fontWeight: '300',
                     fontFamily: 'Arial, sans-serif',
@@ -731,8 +731,8 @@ const Toro = () => {
                 transition: 'background-color 0.3s ease, border-color 0.3s ease'
             }}>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <h1 style={{ margin: '0', fontSize: 'clamp(1.4vw, 2.3vh, 22px)', fontWeight: 800, color: isDark ? '#F8FAFC' : '#343434ff', lineHeight: '1.4', transition: 'color 0.3s ease' }}>Kāuhnemismachiyotl</h1>
-                    <h5 style={{ margin: '0', fontSize: 'clamp(1.2vw, 2vh, 20px)', fontWeight: 800, color: isDark ? '#F8FAFC' : '#0F172A', lineHeight: '1.2', transition: 'color 0.3s ease' }}>Tonalpohualli</h5>
+                    <h1 style={{ margin: '0', fontSize: 'clamp(1vw, 2.1vh, 20px)', fontWeight: 800, color: isDark ? '#F8FAFC' : '#0F172A', lineHeight: '1.2', transition: 'color 0.3s ease' }}>Kāuhnemismachiyotl</h1>
+                    <h5 style={{ margin: '0', fontSize: 'clamp(1.3vw, 2.2vh, 16px)', fontWeight: 790, color: isDark ? '#F8FAFC' : '#0F172A', lineHeight: '1', transition: 'color 0.3s ease' }}>Tonalpohualli</h5>
                     <div className="subtitle" style={{ fontSize: 'clamp(0.7vw, 1.1vh, 10px)', color: '#64748B', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', marginTop: '2px' }}>Toro Interactivo 3D - Modelo Z₁₃ ⊕ Z₂₀</div>
                 </div>
 

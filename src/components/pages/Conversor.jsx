@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { convertirTonalli, convertirXihuitl, convertirTonalliMeza, convertirXihuitlMeza, cempohualliMeza, obtenerDiaRitual, cempohualliCaso } from '../funtions/funtions';
 import CalendarioGiratorio from './CalendarioGiratorio';
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -24,6 +24,37 @@ const Conversor = () => {
     // Nuevo estado para el Tonalli a las 12:00 pm (Caso)
     const [tonalliMediodia, setTonalliMediodia] = useState(null)
     const [veintenaCaso, setVeintenaCaso] = useState(null)
+
+    // Estados para historial y mensajes de consulta anterior
+    const [history, setHistory] = useState(() => {
+        try {
+            const savedHistory = localStorage.getItem('conversionHistory')
+            if (savedHistory) {
+                const parsed = JSON.parse(savedHistory)
+                if (Array.isArray(parsed)) return parsed
+            }
+            const single = localStorage.getItem('lastConversionQuery')
+            if (single) {
+                return [JSON.parse(single)]
+            }
+            return []
+        } catch (e) {
+            return []
+        }
+    })
+    const [currentIndex, setCurrentIndex] = useState(-1)
+    const [alertaMensaje, setAlertaMensaje] = useState('')
+    const alertaTimeoutRef = useRef(null)
+
+    const mostrarAlerta = (mensaje) => {
+        setAlertaMensaje(mensaje)
+        if (alertaTimeoutRef.current) {
+            clearTimeout(alertaTimeoutRef.current)
+        }
+        alertaTimeoutRef.current = setTimeout(() => {
+            setAlertaMensaje('')
+        }, 5000)
+    }
     // Funcion interna para ejecutar la conversion
     const runConversion = (dateStr, timeStr) => {
         // Combinar fecha y hora, para Caso(si no hay hora, se usa 00:00)
@@ -61,11 +92,28 @@ const Conversor = () => {
     //Funcion para manejar el clic en el boton Mostrar conversión
     const handleConvert = () => {
         if (!selectedDate) return
+        if (alertaTimeoutRef.current) clearTimeout(alertaTimeoutRef.current)
+        setAlertaMensaje('')
         runConversion(selectedDate, selectedTime)
+
+        const newQuery = { date: selectedDate, time: selectedTime }
 
         // Guardar la consulta en localStorage
         try {
-            localStorage.setItem('lastConversionQuery', JSON.stringify({ date: selectedDate, time: selectedTime }))
+            setHistory(prevHistory => {
+                const baseHistory = currentIndex >= 0 ? prevHistory.slice(0, currentIndex + 1) : prevHistory
+                const last = baseHistory[baseHistory.length - 1]
+                let updatedHistory
+                if (last && last.date === newQuery.date && (last.time || '') === (newQuery.time || '')) {
+                    updatedHistory = baseHistory
+                } else {
+                    updatedHistory = [...baseHistory, newQuery]
+                }
+                localStorage.setItem('conversionHistory', JSON.stringify(updatedHistory))
+                setCurrentIndex(updatedHistory.length - 1)
+                return updatedHistory
+            })
+            localStorage.setItem('lastConversionQuery', JSON.stringify(newQuery))
             setHasPrevious(true)
         } catch (e) {
             console.error("Error al guardar en localStorage", e)
@@ -75,15 +123,32 @@ const Conversor = () => {
     // Funcion para manejar el clic en el boton Consulta anterior
     const handleLoadPrevious = () => {
         try {
-            const saved = localStorage.getItem('lastConversionQuery')
-            if (saved) {
-                const { date, time } = JSON.parse(saved)
-                setSelectedDate(date)
-                setSelectedTime(time || '')
-                runConversion(date, time || '')
+            let targetIndex = -1
+            if (currentIndex === -1) {
+                // Si aún no se muestra ninguna consulta en esta vista, cargar la última del historial
+                targetIndex = history.length - 1
+            } else {
+                // Si ya hay una consulta mostrándose, ir a la anterior
+                targetIndex = currentIndex - 1
             }
+
+            if (targetIndex >= 0 && targetIndex < history.length) {
+                const query = history[targetIndex]
+                if (query && query.date) {
+                    if (alertaTimeoutRef.current) clearTimeout(alertaTimeoutRef.current)
+                    setAlertaMensaje('')
+                    setSelectedDate(query.date)
+                    setSelectedTime(query.time || '')
+                    runConversion(query.date, query.time || '')
+                    setCurrentIndex(targetIndex)
+                    return
+                }
+            }
+
+            mostrarAlerta('Lo siento no existe ninguna consulta anterior')
         } catch (e) {
             console.error("Error al cargar la consulta de localStorage", e)
+            mostrarAlerta('Lo siento no existe ninguna consulta anterior')
         }
     }
 
@@ -117,7 +182,13 @@ const Conversor = () => {
                                 </div>
                                 <br />
                                 <button id="btn-mostrar-conversion" type="button" className="btn btn-secondary me-2" onClick={handleConvert} disabled={!selectedDate}>Mostrar conversión</button>
-                                <button id="btn-consulta-anterior" type="button" className="btn btn-outline-info" onClick={handleLoadPrevious} disabled={!hasPrevious}>Consulta anterior</button>
+                                <button id="btn-consulta-anterior" type="button" className="btn btn-outline-info" onClick={handleLoadPrevious}>Consulta anterior</button>
+
+                                {alertaMensaje && (
+                                    <div className="alert alert-light mt-3 mb-0 text-center" role="alert">
+                                        {alertaMensaje}
+                                    </div>
+                                )}
 
                                 {(!tonalliDiaMeza || !tonalliDia) ? (
                                     <CalendarioGiratorio
