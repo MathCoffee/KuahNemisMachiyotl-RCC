@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import { convertirTonalli, convertirXihuitl, convertirTonalliMeza, convertirXihuitlMeza, cempohualliMeza, obtenerDiaRitual, cempohualliCaso } from '../funtions/funtions';
+import { convertirTonalli, convertirXihuitl, convertirTonalliMeza, convertirXihuitlMeza, cempohualliMeza, obtenerDiaRitual, cempohualliCaso, handleLoadPrevious } from '../funtions/funtions';
 import CalendarioGiratorio from './CalendarioGiratorio';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '../styles/Estilos.css'
@@ -16,7 +16,11 @@ const Conversor = () => {
     const [ritualDay, setRitualDay] = useState(null)
     const [hasPrevious, setHasPrevious] = useState(() => {
         try {
-            return typeof window !== 'undefined' && !!localStorage.getItem('lastConversionQuery')
+            if (typeof window !== 'undefined') {
+                localStorage.removeItem('conversionHistory')
+                localStorage.removeItem('lastConversionQuery')
+            }
+            return typeof window !== 'undefined' && !!sessionStorage.getItem('lastConversionQuery')
         } catch (e) {
             return false
         }
@@ -28,12 +32,12 @@ const Conversor = () => {
     // Estados para historial y mensajes de consulta anterior
     const [history, setHistory] = useState(() => {
         try {
-            const savedHistory = localStorage.getItem('conversionHistory')
+            const savedHistory = sessionStorage.getItem('conversionHistory')
             if (savedHistory) {
                 const parsed = JSON.parse(savedHistory)
                 if (Array.isArray(parsed)) return parsed
             }
-            const single = localStorage.getItem('lastConversionQuery')
+            const single = sessionStorage.getItem('lastConversionQuery')
             if (single) {
                 return [JSON.parse(single)]
             }
@@ -98,7 +102,7 @@ const Conversor = () => {
 
         const newQuery = { date: selectedDate, time: selectedTime }
 
-        // Guardar la consulta en localStorage
+        // Guardar la consulta en sessionStorage
         try {
             setHistory(prevHistory => {
                 const baseHistory = currentIndex >= 0 ? prevHistory.slice(0, currentIndex + 1) : prevHistory
@@ -109,47 +113,30 @@ const Conversor = () => {
                 } else {
                     updatedHistory = [...baseHistory, newQuery]
                 }
-                localStorage.setItem('conversionHistory', JSON.stringify(updatedHistory))
+                sessionStorage.setItem('conversionHistory', JSON.stringify(updatedHistory))
                 setCurrentIndex(updatedHistory.length - 1)
                 return updatedHistory
             })
-            localStorage.setItem('lastConversionQuery', JSON.stringify(newQuery))
+            sessionStorage.setItem('lastConversionQuery', JSON.stringify(newQuery))
             setHasPrevious(true)
         } catch (e) {
-            console.error("Error al guardar en localStorage", e)
+            console.error("Error al guardar en sessionStorage", e)
         }
     }
 
     // Funcion para manejar el clic en el boton Consulta anterior
-    const handleLoadPrevious = () => {
-        try {
-            let targetIndex = -1
-            if (currentIndex === -1) {
-                // Si aún no se muestra ninguna consulta en esta vista, cargar la última del historial
-                targetIndex = history.length - 1
-            } else {
-                // Si ya hay una consulta mostrándose, ir a la anterior
-                targetIndex = currentIndex - 1
-            }
-
-            if (targetIndex >= 0 && targetIndex < history.length) {
-                const query = history[targetIndex]
-                if (query && query.date) {
-                    if (alertaTimeoutRef.current) clearTimeout(alertaTimeoutRef.current)
-                    setAlertaMensaje('')
-                    setSelectedDate(query.date)
-                    setSelectedTime(query.time || '')
-                    runConversion(query.date, query.time || '')
-                    setCurrentIndex(targetIndex)
-                    return
-                }
-            }
-
-            mostrarAlerta('Lo siento no existe ninguna consulta anterior')
-        } catch (e) {
-            console.error("Error al cargar la consulta de localStorage", e)
-            mostrarAlerta('Lo siento no existe ninguna consulta anterior')
-        }
+    const handlePrevious = () => {
+        handleLoadPrevious({
+            history,
+            currentIndex,
+            setCurrentIndex,
+            setSelectedDate,
+            setSelectedTime,
+            runConversion,
+            mostrarAlerta,
+            alertaTimeoutRef,
+            setAlertaMensaje
+        })
     }
 
     return (
@@ -182,7 +169,7 @@ const Conversor = () => {
                                 </div>
                                 <br />
                                 <button id="btn-mostrar-conversion" type="button" className="btn btn-secondary me-2" onClick={handleConvert} disabled={!selectedDate}>Mostrar conversión</button>
-                                <button id="btn-consulta-anterior" type="button" className="btn btn-outline-info" onClick={handleLoadPrevious}>Consulta anterior</button>
+                                <button id="btn-consulta-anterior" type="button" className="btn btn-outline-info" onClick={handlePrevious}>Consulta anterior</button>
 
                                 {alertaMensaje && (
                                     <div className="alert alert-light mt-3 mb-0 text-center" role="alert">

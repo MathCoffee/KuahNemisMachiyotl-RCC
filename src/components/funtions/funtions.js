@@ -1475,3 +1475,75 @@ export const getRumboSegments = (maxDay, toroData) => {
     return segments;
 };
 
+// --- FUNCIÓN PARA CARGAR LA CONSULTA ANTERIOR EN EL HISTORIAL ---
+export const handleLoadPrevious = (
+    paramsOrHistory,
+    currentIndexParam,
+    setCurrentIndexParam,
+    setSelectedDateParam,
+    setSelectedTimeParam,
+    runConversionParam,
+    mostrarAlertaParam,
+    alertaTimeoutRefParam,
+    setAlertaMensajeParam
+) => {
+    let history, currentIndex, setCurrentIndex, setSelectedDate, setSelectedTime, runConversion, mostrarAlerta, alertaTimeoutRef, setAlertaMensaje;
+
+    if (paramsOrHistory && typeof paramsOrHistory === 'object' && !Array.isArray(paramsOrHistory)) {
+        ({
+            history,
+            currentIndex,
+            setCurrentIndex,
+            setSelectedDate,
+            setSelectedTime,
+            runConversion,
+            mostrarAlerta,
+            alertaTimeoutRef,
+            setAlertaMensaje
+        } = paramsOrHistory);
+    } else {
+        history = paramsOrHistory;
+        currentIndex = currentIndexParam;
+        setCurrentIndex = setCurrentIndexParam;
+        setSelectedDate = setSelectedDateParam;
+        setSelectedTime = setSelectedTimeParam;
+        runConversion = runConversionParam;
+        mostrarAlerta = mostrarAlertaParam;
+        alertaTimeoutRef = alertaTimeoutRefParam;
+        setAlertaMensaje = setAlertaMensajeParam;
+    }
+
+    try {
+        let targetIndex = -1;
+        if (currentIndex === -1) {
+            // Si aún no se muestra ninguna consulta en esta vista, cargar la última del historial
+            targetIndex = (history && history.length) ? history.length - 1 : -1;
+        } else {
+            // Si ya hay una consulta mostrándose, ir a la anterior
+            targetIndex = currentIndex - 1;
+        }
+
+        if (history && targetIndex >= 0 && targetIndex < history.length) {
+            const query = history[targetIndex];
+            if (query && query.date) {
+                if (alertaTimeoutRef && alertaTimeoutRef.current) clearTimeout(alertaTimeoutRef.current);
+                if (setAlertaMensaje) setAlertaMensaje('');
+                if (setSelectedDate) setSelectedDate(query.date);
+                if (setSelectedTime) setSelectedTime(query.time || '');
+                if (runConversion) runConversion(query.date, query.time || '');
+                if (setCurrentIndex) setCurrentIndex(targetIndex);
+                return;
+            }
+        }
+
+        if (mostrarAlerta) {
+            mostrarAlerta('Lo siento no existe ninguna consulta anterior');
+        }
+    } catch (e) {
+        console.error("Error al cargar la consulta anterior", e);
+        if (mostrarAlerta) {
+            mostrarAlerta('Lo siento no existe ninguna consulta anterior');
+        }
+    }
+};
+
