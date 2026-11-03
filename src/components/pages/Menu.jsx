@@ -4,16 +4,13 @@ import { Link, useLocation } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '../styles/Estilos.css'
 import { useTheme } from '../../context/ThemeContext'
-
 const Menu = () => {
   const location = useLocation()
   const [isNavOpen, setIsNavOpen] = useState(false)
   const { theme, toggleTheme } = useTheme()
-
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen)
   }
-  //Funcion para determinar si un link esta activo
   const isActive = (path) => {
     return location.pathname === path
   }
@@ -78,5 +75,4 @@ const Menu = () => {
     </>
   )
 }
-
 export default Menu

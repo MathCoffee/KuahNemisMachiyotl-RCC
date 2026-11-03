@@ -1,7 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-
 const ThemeContext = createContext();
-
 export const ThemeProvider = ({ children }) => {
     const [theme, setTheme] = useState(() => {
         try {
@@ -11,15 +9,12 @@ export const ThemeProvider = ({ children }) => {
             return 'dark';
         }
     });
-
     useEffect(() => {
         try {
             localStorage.setItem('theme', theme);
         } catch (e) {
             console.error("No se pudo guardar el tema en localStorage", e);
         }
-
-        // Aplicamos las clases en el body
         if (theme === 'light') {
             document.body.classList.add('light-theme');
             document.body.classList.remove('dark-theme');
@@ -28,18 +23,15 @@ export const ThemeProvider = ({ children }) => {
             document.body.classList.remove('light-theme');
         }
     }, [theme]);
-
     const toggleTheme = () => {
         setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
     };
-
     return (
         <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
             {children}
         </ThemeContext.Provider>
     );
 };
-
 export const useTheme = () => {
     const context = useContext(ThemeContext);
     if (!context) {

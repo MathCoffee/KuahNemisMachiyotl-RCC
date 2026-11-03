@@ -1,15 +1,12 @@
 import React, { useState } from 'react'
 import { obtenerDiaRitual, obtenerDiaRitualCaso } from '../funtions/funtions'
 import { useTheme } from '../../context/ThemeContext'
-
 const Calculadora = () => {
     const [correlacion, setCorrelacion] = useState('meza');
     const [sdate, setSdate] = useState('2026-03-12');
     const [time, setTime] = useState('');
     const [result, setResult] = useState(null);
     const { theme } = useTheme();
-
-    // Referencia Maestra: 12 de Marzo 2026, 06:43 AM = Bloque 1, Año 1, Día 1
     const REF_YEAR = 2026;
     const calcularPosicion = () => {
         const res = correlacion === 'meza'
@@ -19,7 +16,6 @@ const Calculadora = () => {
             setResult(res);
         }
     }
-
     const handleCorrelacionChange = (tipo) => {
         setCorrelacion(tipo);
         setResult(null);
@@ -31,7 +27,6 @@ const Calculadora = () => {
             setTime('');
         }
     };
-
     return (
         <>
             <div className="container py-5">
@@ -40,7 +35,6 @@ const Calculadora = () => {
                         <h5 className="mb-0">Calculadora de 18,980 Días</h5>
                     </div>
                     <div className="card-body">
-                        {/* Selector de Correlación */}
                         <div className="d-flex justify-content-center gap-4 mb-4">
                             <div className="form-check">
                                 <input
@@ -71,7 +65,6 @@ const Calculadora = () => {
                                 </label>
                             </div>
                         </div>
-
                         {correlacion === 'meza' ? (
                             <>
                                 <div className="row g-2 mb-3">
@@ -131,12 +124,10 @@ const Calculadora = () => {
                                 <button className="btn btn-primary w-100 fw-bold shadow-sm" onClick={calcularPosicion}>CALCULAR NÚMERO DE DÍA</button>
                             </>
                         )}
-
                         {result && (
                             <div className={`mt-4 p-3 rounded border text-center ${theme === 'dark' ? 'bg-dark border-secondary' : 'bg-white'}`}>
                                 <span className="badge bg-secondary mb-2">{result.cal}</span>
                                 <h1 className="display-4 fw-bold text-primary mb-0">Día {result.day}</h1>
-                                {/* <p className="text-muted small">Año {result.year} del Bloque (Ciclo 4: Año {result.cycle})</p> */}
                                 <p className="text-theme-muted small">Año {result.year} del Bloque de 52 años</p>
                                 <div className="alert alert-secondary py-1 small mb-1">Hora procesada: {result.usedTime}</div>
                                 <div className="alert alert-info py-1 small">Inicio del año: {result.startTime}</div>
@@ -148,5 +139,4 @@ const Calculadora = () => {
         </>
     )
 }
-
 export default Calculadora

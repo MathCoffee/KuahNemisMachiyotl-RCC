@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTheme } from '../../context/ThemeContext'
-
 const MenuLat = () => {
     const location = useLocation()
     const [isOpen, setIsOpen] = useState(false)
@@ -16,20 +15,15 @@ const MenuLat = () => {
         { path: '/calculadora', label: 'CALCULADORA' },
         { path: '/toro', label: 'TORO' }
     ]
-
     return (
         <>
-            {/* Boton hamburguesa flotante */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 style={{
                     position: 'absolute',
                     top: '12px',
                     left: '12px',
-                    zIndex: 1100, // Por encima del menú desplegado
-                    /* backgroundColor: isDark ? '#011b4aff' : '#F1F5F9',
-                    color: isDark ? '#F8FAFC' : '#0F172A',
-                    border: isDark ? '1px solid #011a4ac8' : '1px solid #CBD5E1', */
+                    zIndex: 1100,
                     backgroundColor: isDark ? '#0160b9e7' : '#011b4aff',
                     color: isDark ? '#005cb8ff' : '#0F172A',
                     border: isDark ? '1px solid #005cb8ff' : '1px solid #011a4ac8',
@@ -50,9 +44,7 @@ const MenuLat = () => {
                 <span style={{ width: '22px', height: '2px', backgroundColor: isDark ? '#F8FAFC' : '#F8FAFC', transition: '0.3s', transform: isOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none' }}></span>
                 <span style={{ width: '22px', height: '2px', backgroundColor: isDark ? '#F8FAFC' : '#F8FAFC', transition: '0.3s', opacity: isOpen ? 0 : 1 }}></span>
                 <span style={{ width: '22px', height: '2px', backgroundColor: isDark ? '#F8FAFC' : '#F8FAFC', transition: '0.3s', transform: isOpen ? 'rotate(-45deg) translate(5px, -5px)' : 'none' }}></span>
-                {/* <span style={{ width: '22px', height: '2px', backgroundColor: isDark ? '#0F172A' : '#F8FAFC', transition: '0.3s', transform: isOpen ? 'rotate(-45deg) translate(5px, -5px)' : 'none' }}></span> */}
             </button>
-            {/* Capa de fondo oscura (Overlay) opcional para cerrar al hacer clic fuera */}
             {isOpen && (
                 <div
                     onClick={() => setIsOpen(false)}
@@ -69,7 +61,6 @@ const MenuLat = () => {
                     }}
                 />
             )}
-            {/* Barra Lateral Navegación */}
             <div
                 style={{
                     position: 'absolute',
@@ -77,8 +68,6 @@ const MenuLat = () => {
                     left: 0,
                     width: '280px',
                     height: '100%',
-                    /*  backgroundColor: isDark ? '#00205bc8' : '#FFFFFF',
-                     borderRight: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0', */
                     backgroundColor: isDark ? '#0160b9e7' : '#00205bc8',
                     borderRight: isDark ? '1px solid #0160b9e7' : '1px solid #1E293B',
                     padding: '76px 16px 20px 16px',
@@ -95,13 +84,12 @@ const MenuLat = () => {
                 <div style={{ marginBottom: '24px', paddingLeft: '8px' }}>
                     <span style={{ fontSize: '10px', color: isDark ? '#29394fff' : '#38BDF8', fontWeight: '800', letterSpacing: '1.5px', textTransform: 'uppercase' }}>MENÚ</span>
                 </div>
-
                 <nav style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     {menuItems.map((item) => (
                         <Link
                             key={item.path}
                             to={item.path}
-                            onClick={() => setIsOpen(false)} // Cierra el menú al navegar
+                            onClick={() => setIsOpen(false)}
                             style={{
                                 display: 'block',
                                 padding: '12px 16px',
@@ -110,25 +98,19 @@ const MenuLat = () => {
                                 fontFamily: 'Verdana',
                                 fontSize: '14px',
                                 fontWeight: isActive(item.path) ? '700' : '500',
-                                /* color: isActive(item.path) ? (isDark ? '#38BDF8' : '#2563EB') : (isDark ? '#e3e7ecff' : '#475569'), */
                                 color: isActive(item.path) ? (isDark ? '#29394fff' : '#38BDF8') : (isDark ? '#e3e7ecff' : '#ffffffff'),
-                                /* backgroundColor: isActive(item.path) ? (isDark ? '#29394fff' : '#EFF6FF') : 'transparent', */
                                 backgroundColor: isActive(item.path) ? (isDark ? '#EFF6FF' : '#29394fff') : 'transparent',
-                                /*  borderLeft: isActive(item.path) ? (isDark ? '4px solid #38BDF8' : '4px solid #2563EB') : '4px solid transparent', */
                                 borderLeft: isActive(item.path) ? (isDark ? '4px solid #29394fff' : '4px solid #38BDF8') : '4px solid transparent',
                                 transition: 'all 0.2s ease'
                             }}
                             onMouseEnter={(e) => {
                                 if (!isActive(item.path)) {
                                     e.currentTarget.style.color = isDark ? '#f7f7f7ff' : '#0F172A';
-                                    /* e.currentTarget.style.backgroundColor = isDark ? '#EFF6FF' : '#29394fff'; */
                                     e.currentTarget.style.backgroundColor = isDark ? '#29394fff' : '#EFF6FF';
-
                                 }
                             }}
                             onMouseLeave={(e) => {
                                 if (!isActive(item.path)) {
-                                    /* e.currentTarget.style.color = isDark ? '#e3e7ecff' : '#475569'; */
                                     e.currentTarget.style.color = isDark ? '#e3e7ecff' : '#e3e7ecff';
                                     e.currentTarget.style.backgroundColor = 'transparent';
                                 }
@@ -138,8 +120,6 @@ const MenuLat = () => {
                         </Link>
                     ))}
                 </nav>
-
-                {/* Botón de cambio de tema al final de la barra lateral */}
                 <div style={{ marginTop: 'auto', paddingTop: '20px', display: 'flex', justifyContent: 'center' }}>
                     <button
                         onClick={toggleTheme}
@@ -182,5 +162,4 @@ const MenuLat = () => {
         </>
     )
 }
-
 export default MenuLat

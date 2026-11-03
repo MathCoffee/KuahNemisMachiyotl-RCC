@@ -1,20 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { getImagePath, SEGDATOS_VEINTENAS, SEGDATOS_VEINTENASCaso, describirArcoInteractivo, numberM, signos } from '../funtions/funtions';
 import { useTheme } from '../../context/ThemeContext';
-
 const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliDia, veintenaCaso, tipo = 'meza' }) => {
     const isCaso = tipo === 'caso';
-
-    // Determinar valores activos según el tipo de cuenta
     const activeTonalli = isCaso ? tonalliDia : tonalliDiaMeza;
     const activeVeintena = isCaso ? (veintenaCaso ? veintenaCaso.veintena : null) : veintenaMeza;
     const activeRitualDay = isCaso ? (veintenaCaso ? veintenaCaso.dia : null) : ritualDay;
-
     const [isSpinning, setIsSpinning] = useState(true);
-
     const { theme } = useTheme();
     const isDark = theme === 'dark';
-
     useEffect(() => {
         if (!isCaso) {
             if (tonalliDiaMeza && veintenaMeza && ritualDay) {
@@ -30,11 +24,8 @@ const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliD
             }
         }
     }, [isCaso, tonalliDiaMeza, veintenaMeza, ritualDay, tonalliDia, veintenaCaso]);
-
-    // Lógica para Responsividad por Escala
     const [scale, setScale] = useState(1);
     const containerRef = useRef(null);
-
     useEffect(() => {
         const handleResize = () => {
             if (containerRef.current) {
@@ -47,44 +38,27 @@ const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliD
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
-
-    // 365.png: Gira a la derecha (CW). 365 días. Detiene en el punto de partida (0°).
     const angle365 = 0;
-
-    // veintenas.png: Gira a la izquierda (CCW). Detiene en el punto de partida (0°).
     const angleVeintenas = 0;
-
-    // Engrane 13: Gira a la derecha (CW). 195px.
     const numeroT = isCaso
         ? (tonalliDia ? tonalliDia.numero.español : "1")
         : (tonalliDiaMeza ? tonalliDiaMeza.numeroT.español : "1");
-
     const numeroIndex = numberM.indexOf(numeroT);
     const angle13 = activeTonalli ? 352.5 + (numeroIndex * (360 / 13)) : 0;
-
-    // Engrane 20: Gira a la izquierda (CCW). 300px.
     const signoName = isCaso
         ? (tonalliDia ? tonalliDia.simbolo.español : "Lagarto")
         : (tonalliDiaMeza ? tonalliDiaMeza.signoT.español : "Lagarto");
-
     const signoIndex = signos.indexOf(signoName);
     const angle20 = activeTonalli ? 364.5 - (signoIndex * (360 / 20)) : 0;
-
     const signImageSrc = isCaso
         ? (tonalliDia ? tonalliDia.symbolImage : null)
         : (tonalliDiaMeza ? tonalliDiaMeza.signTonalImage : null);
-
     const numberImageSrc = isCaso
         ? (tonalliDia ? tonalliDia.numberImage : null)
         : (tonalliDiaMeza ? tonalliDiaMeza.numberTonalImage : null);
-
-    // --- CÁLCULO DE MÁSCARAS ---
-    const centroSVG = 500; // Coordenada central interna (Vectorial 1000x1000)
-
-    // Calibración inicial de ángulos (Ajusta este desfase en grados si los sectores no coinciden con las imágenes)
+    const centroSVG = 500;
     const desfasamientoVeintenas = 106.5;
     const desfasamientoDias = 107;
-
     return (
         <div ref={containerRef} className="calendar-visual-container mt-4 p-2 p-md-4 rounded-5" style={{
             background: isDark ? '#1E293B' : '#FFFFFF',
@@ -102,14 +76,11 @@ const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliD
             overflow: 'hidden',
             minHeight: `${560 * scale}px`
         }}>
-            {/* Título de Cuenta */}
             {!isSpinning && (
                 <h5 className="fw-bold mb-3" style={{ color: 'gold', zIndex: 20, textAlign: 'center' }}>
-                    {isCaso ? 'Correspondencia de Caso' : 'Correspondencia de Meza'}
+                    {isCaso ? 'Correlación de Caso' : 'Correlación de Meza'}
                 </h5>
             )}
-
-            {/* Contenedor Escalable */}
             <div style={{
                 transform: `scale(${scale})`,
                 transformOrigin: 'top center',
@@ -118,7 +89,6 @@ const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliD
                 position: 'relative',
                 transition: 'transform 0.3s ease'
             }}>
-                {/* Engranes Centrales - DETRÁS */}
                 <div className="gears-container" style={{
                     position: 'absolute',
                     width: '100%',
@@ -126,7 +96,6 @@ const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliD
                     zIndex: 0,
                     perspective: '1000px'
                 }}>
-                    {/* Engrane 20 - Derecha / Centro */}
                     <div className="gear-wrapper" style={{
                         position: 'absolute',
                         width: '300px',
@@ -160,8 +129,6 @@ const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliD
                             </div>
                         )}
                     </div>
-
-                    {/* Engrane 13 - Izquierda / Abajo */}
                     <div className="gear-wrapper" style={{
                         position: 'absolute',
                         width: '195px',
@@ -196,8 +163,6 @@ const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliD
                         )}
                     </div>
                 </div>
-
-                {/* Anillos - DELANTE */}
                 <div className="calendar-rings-wrapper" style={{
                     position: 'relative',
                     width: '500px',
@@ -212,7 +177,6 @@ const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliD
                         background: 'radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%)',
                         zIndex: 1
                     }}></div>
-                    {/* ANILLO 1: Ciclo 365 (Imagen Exterior) */}
                     <div className={`ring ring-365 ${isSpinning ? 'spinning-right' : ''}`} style={{
                         position: 'absolute', width: '100%', height: '100%',
                         transform: isSpinning ? '' : `rotate(${angle365}deg)`,
@@ -220,7 +184,6 @@ const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliD
                         zIndex: 2
                     }}>
                         <img src={getImagePath('365-02.png')} alt="Ciclo 365" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                        {/* Máscara Vectorial Encima */}
                         <svg className="position-absolute top-0 start-0 w-100 h-100" viewBox="0 0 1000 1000" style={{ pointerEvents: 'none' }}>
                             <g>
                                 {Array.from({ length: 365 }).map((_, index) => {
@@ -228,10 +191,8 @@ const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliD
                                     const amplitudDia = 360 / 365;
                                     const anguloInicio = desfasamientoDias + (index * amplitudDia);
                                     const anguloFin = anguloInicio + amplitudDia;
-
                                     const pathData = describirArcoInteractivo(centroSVG, centroSVG, 460, 500, anguloInicio, anguloFin);
                                     const esDiaActivo = !isSpinning && Number(activeRitualDay) === diaNumero;
-
                                     return (
                                         <path
                                             key={`dia-${diaNumero}`}
@@ -248,7 +209,6 @@ const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliD
                             </g>
                         </svg>
                     </div>
-                    {/* ANILLO 2: Veintenas (Imagen Interior) */}
                     <div className={`ring ring-veintenas ${isSpinning ? 'spinning-left' : ''}`} style={{
                         position: 'absolute', width: '88%', height: '88%',
                         transform: isSpinning ? '' : `rotate(${angleVeintenas}deg)`,
@@ -256,7 +216,6 @@ const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliD
                         zIndex: 3
                     }}>
                         <img src={getImagePath(isCaso ? 'veintenas-03.png' : 'veintenas-02.png')} alt="Veintenas" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                        {/* Máscara Vectorial Encima */}
                         <svg className="position-absolute top-0 start-0 w-100 h-100" viewBox="0 0 1000 1000" style={{ pointerEvents: 'none' }}>
                             <g>
                                 {(() => {
@@ -267,11 +226,8 @@ const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliD
                                         const anguloInicio = anguloAcum;
                                         const anguloFin = anguloAcum + deltaAngulo;
                                         anguloAcum = anguloFin;
-
                                         const pathData = describirArcoInteractivo(centroSVG, centroSVG, 455, 500, anguloInicio, anguloFin);
-
                                         const esVeintenaActiva = !isSpinning && activeVeintena === seg.id;
-
                                         return (
                                             <path
                                                 key={`veintena-${seg.id}`}
@@ -289,7 +245,6 @@ const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliD
                             </g>
                         </svg>
                     </div>
-
                     {!isSpinning && (
                         <div className="intersection-glow" style={{
                             position: 'absolute', top: '68%', left: '30%', width: '60px', height: '60px',
@@ -300,8 +255,6 @@ const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliD
                     )}
                 </div>
             </div>
-
-            {/* Info inferior */}
             <div className="mt-2 text-center" style={{ transform: `scale(${Math.max(scale, 0.8)})`, zIndex: 20 }}>
                 {!isSpinning && activeVeintena ? (
                     <div className="p-3 rounded-pill" style={{
@@ -321,5 +274,4 @@ const CalendarioGiratorio = ({ tonalliDiaMeza, veintenaMeza, ritualDay, tonalliD
         </div>
     );
 };
-
 export default CalendarioGiratorio;

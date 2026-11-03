@@ -3,9 +3,7 @@ import { convertirTonalli, convertirXihuitl, convertirTonalliMeza, convertirXihu
 import CalendarioGiratorio from './CalendarioGiratorio';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '../styles/Estilos.css'
-
 const Conversor = () => {
-    //Estados para almacenar la fecha seleccionada, la hora y los resultados
     const [selectedDate, setSelectedDate] = useState('')
     const [selectedTime, setSelectedTime] = useState('')
     const [tonalliDia, setTonalliDia] = useState(null)
@@ -25,11 +23,8 @@ const Conversor = () => {
             return false
         }
     })
-    // Nuevo estado para el Tonalli a las 12:00 pm (Caso)
     const [tonalliMediodia, setTonalliMediodia] = useState(null)
     const [veintenaCaso, setVeintenaCaso] = useState(null)
-
-    // Estados para historial y mensajes de consulta anterior
     const [history, setHistory] = useState(() => {
         try {
             const savedHistory = sessionStorage.getItem('conversionHistory')
@@ -49,7 +44,6 @@ const Conversor = () => {
     const [currentIndex, setCurrentIndex] = useState(-1)
     const [alertaMensaje, setAlertaMensaje] = useState('')
     const alertaTimeoutRef = useRef(null)
-
     const mostrarAlerta = (mensaje) => {
         setAlertaMensaje(mensaje)
         if (alertaTimeoutRef.current) {
@@ -59,24 +53,17 @@ const Conversor = () => {
             setAlertaMensaje('')
         }, 5000)
     }
-    // Funcion interna para ejecutar la conversion
     const runConversion = (dateStr, timeStr) => {
-        // Combinar fecha y hora, para Caso(si no hay hora, se usa 00:00)
         const timeCaso = timeStr ? timeStr : '00:00'
         const dateObj = new Date(`${dateStr}T${timeCaso}`)
-
-        const tonalliResult = convertirTonalli(dateObj)//llamada de funcion
-        const xihuitlResult = convertirXihuitl(dateObj)//llamada de funcion
+        const tonalliResult = convertirTonalli(dateObj)
+        const xihuitlResult = convertirXihuitl(dateObj)
         const veintenaResultCaso = cempohualliCaso(dateObj)
-        const tonalliResultMeza = convertirTonalliMeza(dateStr, timeStr)//llamada de funcion
-        const xihuitlResultMeza = convertirXihuitlMeza(dateStr, timeStr)//llamada de funcion
-        const veintenaResultMeza = cempohualliMeza(dateStr, timeStr)//llamada de funcion
-
-        // Calcular Tonalli para las 12:00 pm (mediodía) de la misma fecha
+        const tonalliResultMeza = convertirTonalliMeza(dateStr, timeStr)
+        const xihuitlResultMeza = convertirXihuitlMeza(dateStr, timeStr)
+        const veintenaResultMeza = cempohualliMeza(dateStr, timeStr)
         const dateMediodia = new Date(`${dateStr}T12:00:00`)
         const tonalliMediodiaResult = convertirTonalli(dateMediodia)
-
-        //Actualizar el estado
         setTonalliDia(tonalliResult)
         setXihuitlAnio(xihuitlResult)
         setVeintenaCaso(veintenaResultCaso)
@@ -84,7 +71,6 @@ const Conversor = () => {
         setXihuitlAnioMeza(xihuitlResultMeza)
         setVeintenaMeza(veintenaResultMeza)
         setTonalliMediodia(tonalliMediodiaResult)
-
         const ritualData = obtenerDiaRitual(dateStr, timeStr)
         if (ritualData) {
             setRitualDay(((ritualData.day - 1) % 365) + 1)
@@ -92,17 +78,12 @@ const Conversor = () => {
             setRitualDay(null)
         }
     }
-
-    //Funcion para manejar el clic en el boton Mostrar conversión
     const handleConvert = () => {
         if (!selectedDate) return
         if (alertaTimeoutRef.current) clearTimeout(alertaTimeoutRef.current)
         setAlertaMensaje('')
         runConversion(selectedDate, selectedTime)
-
         const newQuery = { date: selectedDate, time: selectedTime }
-
-        // Guardar la consulta en sessionStorage
         try {
             setHistory(prevHistory => {
                 const baseHistory = currentIndex >= 0 ? prevHistory.slice(0, currentIndex + 1) : prevHistory
@@ -123,8 +104,6 @@ const Conversor = () => {
             console.error("Error al guardar en sessionStorage", e)
         }
     }
-
-    // Funcion para manejar el clic en el boton Consulta anterior
     const handlePrevious = () => {
         handleLoadPrevious({
             history,
@@ -138,7 +117,6 @@ const Conversor = () => {
             setAlertaMensaje
         })
     }
-
     return (
         <>
             <div className="container text-center">
@@ -150,7 +128,6 @@ const Conversor = () => {
                                 Selecciona una fecha y hora
                             </div>
                             <div className="card-body">
-                                {/* <h5 className="card-title">Calendario</h5> */}
                                 <div className="row">
                                     <div className="col-md-7 mb-3">
                                         <label className="form-label text-start d-block" htmlFor="input-fecha">Fecha:</label>
@@ -170,13 +147,11 @@ const Conversor = () => {
                                 <br />
                                 <button id="btn-mostrar-conversion" type="button" className="btn btn-secondary me-2" onClick={handleConvert} disabled={!selectedDate}>Mostrar conversión</button>
                                 <button id="btn-consulta-anterior" type="button" className="btn btn-outline-info" onClick={handlePrevious}>Consulta anterior</button>
-
                                 {alertaMensaje && (
                                     <div className="alert alert-light mt-3 mb-0 text-center" role="alert">
                                         {alertaMensaje}
                                     </div>
                                 )}
-
                                 {(!tonalliDiaMeza || !tonalliDia) ? (
                                     <CalendarioGiratorio
                                         tipo="meza"
@@ -212,11 +187,9 @@ const Conversor = () => {
             {tonalliDia && tonalliDiaMeza && xihuitlAnio && xihuitlAnioMeza && (
                 <div className="container text-center">
                     <div className="row justify-content-center">
-                        <p className="text-theme-muted">* Correspondencia de Meza</p>
+                        <p className="text-theme-muted">* Correlación de Meza</p>
                         <div className="col-md-6">
                             <div className="card" >
-                                {/* <p><img src={tonalliDiaMeza.numberTonalImage} alt={tonalliDiaMeza.numberTonalImage} className="card-img-top img-com" /> <img src={tonalliDiaMeza.signTonalImage} alt={tonalliDiaMeza.signTonalImage} className="card-img-top img-com" /></p> */}
-                                {/* AHORA: */}
                                 <div className="d-flex justify-content-center align-items-center gap-3 pt-3">
                                     <img
                                         src={tonalliDiaMeza.numberTonalImage}
@@ -229,18 +202,10 @@ const Conversor = () => {
                                         className="img-com"
                                     />
                                 </div>
-                                {/* <div className="card-header rounded-3 bg-light">
-                                    <img src={tonalliDiaMeza.numberTonalImage} alt={tonalliDiaMeza.numberTonalImage} className="img-com" />
-                                    <img src={tonalliDiaMeza.signTonalImage} alt={tonalliDiaMeza.signTonalImage} className="img-com" />
-                                </div> */}
                                 <div className="card-body">
                                     <h5 className="card-title">Tonalli</h5>
-                                    <small className="text-secondary" style={{ fontSize: '11px' }}>* Según la correspondencia de Meza</small>
+                                    <small className="text-secondary" style={{ fontSize: '11px' }}>* Según la correlación de Meza</small>
                                     <p className="card-text text-subtitle">Día:</p>
-                                    {/* <p className="card-text text-white small">Hora considerada: {tonalliDiaMeza.usedTime}</p> */}
-                                    {/* <p className="card-text">{tonalliDia.numero.español} - {tonalliDia.simbolo.español}</p>
-                                    <p className="card-text">{tonalliDia.numero.nahuatl} - {tonalliDia.simbolo.nahuatl}</p>
-                                    <p className='card-text'>{tonalliDia.numero.nusavi} - {tonalliDia.simbolo.nusavi}</p> */}
                                     <table className="table table-hover">
                                         <thead>
                                             <tr>
@@ -268,22 +233,19 @@ const Conversor = () => {
                                         </tbody>
                                     </table>
                                     <small className="text-secondary" style={{ fontSize: '12px', color: '#adb5bd' }}>Hora procesada: {tonalliDiaMeza.usedTime}</small><br></br>
-                                    {/* <div className="alert alert-secondary py-1 small mb-1">Hora procesada: {tonalliDiaMeza.usedTime}</div>
-                                    <div className="alert alert-info py-1 small mb-1">Inicio del año: {tonalliDiaMeza.startTime}</div> */}
                                     <div className="alert alert-success py-1 small">Esta fecha pertenece a la veintena: {veintenaMeza}</div>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-6">
                             <div className="card" >
-                                {/* <p><img src={xihuitlAnioMeza.numberImageX} alt={xihuitlAnioMeza.numberImageX} className="card-img-top img-com" /> <img src={xihuitlAnioMeza.symbolImageX} alt={xihuitlAnioMeza.symbolImageX} className="card-img-top img-com" /></p> */}
                                 <div className="d-flex justify-content-center align-items-center gap-3 pt-3">
                                     <img src={xihuitlAnioMeza.numberImageX} alt={xihuitlAnioMeza.numberImageX} className="img-com" />
                                     <img src={xihuitlAnioMeza.symbolImageX} alt={xihuitlAnioMeza.symbolImageX} className="img-com" />
                                 </div>
                                 <div className="card-body">
                                     <h5 className="card-title">Xihuitl</h5>
-                                    <small className="text-secondary" style={{ fontSize: '11px', color: '#adb5bd' }}>* Según la correspondencia de Meza</small>
+                                    <small className="text-secondary" style={{ fontSize: '11px', color: '#adb5bd' }}>* Según la correlación de Meza</small>
                                     <p className="card-text text-subtitle">Año:</p>
                                     <table className="table table-hover">
                                         <thead>
@@ -312,34 +274,21 @@ const Conversor = () => {
                                         </tbody>
                                     </table>
                                     <small className="text-secondary" style={{ fontSize: '12px', color: '#adb5bd' }}>Inicio del año: {tonalliDiaMeza.startTime}</small>
-                                    {/* <small className="text-secondary" style={{ fontSize: '12px', color: '#adb5bd' }}>Hora procesada: {xihuitlAnioMeza.usedTime}</small><br></br>
-                                    <small className="text-secondary" style={{ fontSize: '12px', color: '#adb5bd' }}>Inicio del año: {xihuitlAnioMeza.startTime}</small> */}
-                                    {/* <div className="alert alert-secondary py-1 small mb-1">Hora procesada: {xihuitlAnioMeza.usedTime}</div>
-                                    <div className="alert alert-info py-1 small">Inicio del año: {xihuitlAnioMeza.startTime}</div> */}
                                 </div>
                             </div>
                         </div>
-                        <small className="text-secondary" style={{ fontSize: '13px' }}>* Correspondencia de Meza basado en la fecha de referencia: día 1-Cipactli, año 1-Tochtli (12 de marzo de 2026)</small><br /><br />
-                        <p className="text-theme-muted">* Correspondencia de Caso</p>
+                        <small className="text-secondary" style={{ fontSize: '13px' }}>* Correlación de Meza basado en la fecha de referencia: día 1-Cipactli, año 1-Tochtli (12 de marzo de 2026)</small><br /><br />
+                        <p className="text-theme-muted">* Correlación de Caso</p>
                         <div className="col-md-6">
                             <div className="card" >
-                                {/* <p><img src={tonalliDia.numberImage} alt={tonalliDia.numberImage} className="card-img-top img-com" /> <img src={tonalliDia.symbolImage} alt={tonalliDia.symbolImage} className="card-img-top img-com" /></p> */}
                                 <div className="d-flex justify-content-center align-items-center gap-3 pt-3">
                                     <img src={tonalliDia.numberImage} alt={tonalliDia.numberImage} className="img-com" />
                                     <img src={tonalliDia.symbolImage} alt={tonalliDia.symbolImage} className="img-com" />
                                 </div>
-                                {/*  <div className="card-header rounded-3 bg-light">
-                                    <img src={tonalliDia.numberImage} alt={tonalliDia.numberImage} className="img-com" />
-                                    <img src={tonalliDia.symbolImage} alt={tonalliDia.symbolImage} className="img-com" />
-                                </div> */}
                                 <div className="card-body">
                                     <h5 className="card-title">Tonalli</h5>
-                                    <small className="text-secondary" style={{ fontSize: '11px' }}>* Según la correspondencia de Caso</small>
+                                    <small className="text-secondary" style={{ fontSize: '11px' }}>* Según la correlación de Caso</small>
                                     <p className="card-text text-subtitle">Día:</p>
-                                    {/*  <p className="card-text text-white small">Hora considerada: {tonalliDia.usedTime}</p> */}
-                                    {/* <p className="card-text">{tonalliDia.numero.español} - {tonalliDia.simbolo.español}</p>
-                                    <p className="card-text">{tonalliDia.numero.nahuatl} - {tonalliDia.simbolo.nahuatl}</p>
-                                    <p className='card-text'>{tonalliDia.numero.nusavi} - {tonalliDia.simbolo.nusavi}</p> */}
                                     <table className="table table-hover">
                                         <thead>
                                             <tr>
@@ -369,29 +318,19 @@ const Conversor = () => {
                                     <small className="text-secondary" style={{ fontSize: '12px', color: '#adb5bd' }}>Hora procesada: {tonalliDia.usedTime}</small><br />
                                     {tonalliMediodia && (<small className="text-secondary" style={{ fontSize: '12px', color: '#adb5bd' }}>Al medio día el Tonalli es:  <b> {tonalliMediodia.numero.español}-{tonalliMediodia.simbolo.español}</b></small>)}
                                     {veintenaCaso && (<div className="alert alert-success py-1 small">Esta fecha pertenece a la veintena: {veintenaCaso.veintena}</div>)}
-                                    {/* <div className="alert alert-secondary py-1 small mb-1">Hora procesada: {tonalliDia.usedTime}</div> */}
-                                    {/* <div className="alert alert-info py-1 small">Inicio del año: {tonalliDia.startTime}</div> */}
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-6">
                             <div className="card" >
-                                {/* <p><img src={xihuitlAnio.numberImageX} alt={xihuitlAnio.numberImageX} className="card-img-top img-com" /> <img src={xihuitlAnio.symbolImageX} alt={xihuitlAnio.symbolImageX} className="card-img-top img-com" /></p> */}
                                 <div className="d-flex justify-content-center align-items-center gap-3 pt-3">
                                     <img src={xihuitlAnio.numberImageX} alt={xihuitlAnio.numberImageX} className="img-com" />
                                     <img src={xihuitlAnio.symbolImageX} alt={xihuitlAnio.symbolImageX} className="img-com" />
                                 </div>
-                                {/*  <div className="card-header rounded-3 bg-light">
-                                    <img src={xihuitlAnio.numberImageX} alt={xihuitlAnio.numberImageX} className="img-com" />
-                                    <img src={xihuitlAnio.symbolImageX} alt={xihuitlAnio.symbolImageX} className="img-com"  />
-                                </div> */}
                                 <div className="card-body">
                                     <h5 className="card-title">Xihuitl</h5>
-                                    <small className="text-secondary" style={{ fontSize: '11px', color: '#adb5bd' }}>* Según la correspondencia de Caso</small>
+                                    <small className="text-secondary" style={{ fontSize: '11px', color: '#adb5bd' }}>* Según la correlación de Caso</small>
                                     <p className="card-text text-subtitle">Año:</p>
-                                    {/* <p className="card-text">{xihuitlAnio.numeroX.español} - {xihuitlAnio.simboloX.español}</p>
-                                    <p className="card-text">{xihuitlAnio.numeroX.nahuatl} - {xihuitlAnio.simboloX.nahuatl}</p>
-                                    <p className='card-text'>{xihuitlAnio.numeroX.nusavi} - {xihuitlAnio.simboloX.nusavi}</p> */}
                                     <table className="table table-hover">
                                         <thead>
                                             <tr>
@@ -422,16 +361,11 @@ const Conversor = () => {
                                 </div>
                             </div>
                         </div>
-                        <small className="text-secondary" style={{ fontSize: '13px' }}>* Correspondencia de Caso basado en la fecha de referencia: día 1-Coatl, año 3-Calli (13 de agosto de 1521)</small>
+                        <small className="text-secondary" style={{ fontSize: '13px' }}>* Correlación de Caso basado en la fecha de referencia: día 1-Coatl, año 3-Calli (13 de agosto de 1521)</small>
                     </div>
                 </div>
             )}
-            {/*  <footer className="mt-5 text-center text-secondary" style={{ color: '#adb5bd' }}>
-                <p className="text-white">*Conversión de Caso basado en la fecha de referencia: día 1-Coatl, año 3-Calli (13 de agosto de 1521)</p>
-                <p className="text-white">*Conversión de Meza basado en la fecha de referencia: día 1-Cipactli, año 1-Tochtli (12 de marzo de 2026)</p>
-            </footer> */}
         </>
     )
 }
-
 export default Conversor

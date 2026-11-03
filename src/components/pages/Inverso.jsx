@@ -2,58 +2,35 @@ import React, { useState } from 'react'
 import { tonalliSimbolos, xihuitlSimbolos, encuentraCoincidence, buscarXihuitl, buscarAmbos, buscarAnioCivil, formatDate } from '../funtions/funtions';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '../styles/Estilos.css'
-
 const Inverso = () => {
-    // Modo de búsqueda: 'tonalli' | 'xihuitl' | 'ambos'
     const [modo, setModo] = useState('tonalli');
-
-    // Estado para Tonalli
     const [numero, setNumero] = useState(1);
     const [simbolo, setSimbolo] = useState('Lagarto');
     const [selectedStartDate, setSelectedStartDate] = useState(new Date().toISOString().split('T')[0])
     const [selectedEndDate, setSelectedEndDate] = useState(new Date().toISOString().split('T')[0])
     const [results, setResults] = useState([])
     const [tonalliMessage, setTonalliMessage] = useState("")
-
-    // Estado para Xihuitl
     const [numeroX, setNumeroX] = useState(1);
     const [simboloX, setSimboloX] = useState('Caña');
     const [yearStart, setYearStart] = useState(new Date().getFullYear());
     const [yearEnd, setYearEnd] = useState(new Date().getFullYear());
     const [xihuitlResults, setXihuitlResults] = useState([])
     const [xihuitlMessage, setXihuitlMessage] = useState("")
-
-    // Estado para el modo "ambos": buscar por fecha o por año
-    // 'fecha' = fecha inicio / fecha fin | 'anio' = año inicio / año fin
     const [modoAmbos, setModoAmbos] = useState('fecha');
-
-    // Resultados filtrados de la búsqueda "ambos" (tonalli + xihuitl combinados)
     const [ambosResults, setAmbosResults] = useState([])
     const [ambosMessage, setAmbosMessage] = useState("")
-
-    // Estado para el modo civil
     const [civilResults, setCivilResults] = useState([])
     const [civilMessage, setCivilMessage] = useState("")
-
-    // Mensaje de validación de campos
     const [validationMessage, setValidationMessage] = useState("")
-
     const [loading, setLoading] = useState(false);
     const [loadingX, setLoadingX] = useState(false);
     const [loadingAmbos, setLoadingAmbos] = useState(false);
-
     const resultsCaso = results.filter(r => r.matchCaso);
     const resultsMeza = results.filter(r => r.matchMeza);
-
-    // Ordena de más actual (mayor fecha) a más antiguo (menor fecha)
     const sortDesc = (arr) => [...arr].sort((a, b) => new Date(b.date) - new Date(a.date));
     const sortDescYear = (arr) => [...arr].sort((a, b) => b.year - a.year);
-
-
-    // Lógica del botón Buscar según el modo seleccionado
     const handleBuscar = () => {
         setValidationMessage("")
-
         if (modo === 'tonalli') {
             if (!selectedStartDate || !selectedEndDate) {
                 setValidationMessage("Por favor rellena la Fecha inicial y la Fecha límite para la búsqueda de Tonalli.")
@@ -63,8 +40,6 @@ const Inverso = () => {
             setXihuitlMessage("")
             setAmbosResults([])
             setAmbosMessage("")
-            //encuentraCoincidence(selectedStartDate, selectedEndDate, numero, simbolo, setResults, setTonalliMessage, setLoading)
-            // Normalizar orden de fechas: siempre pasar la menor como inicio y la mayor como fin
             const fechaTonalliA = new Date(selectedStartDate + 'T00:00:00')
             const fechaTonalliB = new Date(selectedEndDate + 'T00:00:00')
             const tonalliStart = fechaTonalliA <= fechaTonalliB ? selectedStartDate : selectedEndDate
@@ -79,8 +54,6 @@ const Inverso = () => {
             setTonalliMessage("")
             setAmbosResults([])
             setAmbosMessage("")
-            //buscarXihuitl(yearStart, yearEnd, numeroX, simboloX, setXihuitlResults, setXihuitlMessage, setLoadingX)
-            // Normalizar orden de años: siempre pasar el menor como inicio y el mayor como fin
             const xihuitlYearStart = Math.min(yearStart, yearEnd)
             const xihuitlYearEnd = Math.max(yearStart, yearEnd)
             buscarXihuitl(xihuitlYearStart, xihuitlYearEnd, numeroX, simboloX, setXihuitlResults, setXihuitlMessage, setLoadingX)
@@ -114,12 +87,9 @@ const Inverso = () => {
             setAmbosMessage("")
             setCivilMessage("")
             setCivilResults([])
-
             buscarAnioCivil(yearStart, setCivilResults, setCivilMessage, setLoading)
         }
     }
-
-    // Limpiar todos los resultados y mensajes
     const handleLimpiar = () => {
         setResults([])
         setTonalliMessage("")
@@ -131,19 +101,13 @@ const Inverso = () => {
         setCivilMessage("")
         setValidationMessage("")
     }
-
     const isLoading = loading || loadingX || loadingAmbos;
-
-    // Ordenar resultados de más actual a más antiguo para Tonalli y Xihuitl
     const resultsCasoDesc = sortDesc(resultsCaso);
     const resultsMezaDesc = sortDesc(resultsMeza);
     const xihuitlResultsDesc = sortDescYear(xihuitlResults);
-
     return (
         <div className="container-fluid py-4">
             <h1 className="text-center mb-5">Correlaciones Calendarícas Precoloniales</h1>
-
-            {/* Selector de modo */}
             <div className="row justify-content-center mb-4 px-3">
                 <div className="col-lg-10 col-xl-8">
                     <div className="card shadow-sm p-3">
@@ -166,29 +130,22 @@ const Inverso = () => {
                     </div>
                 </div>
             </div>
-
-            {/* Formulario dinámico según modo */}
             <div className="row g-4 justify-content-center px-3">
-
-                {/* Bloque Tonalli — visible en modo 'tonalli' */}
                 {modo === 'tonalli' && (
                     <div className="col-lg-6 p-4 card shadow-sm">
                         <h4 className="text-center mb-4" style={{ color: '#60a5fa' }}>Búsqueda por Tonalli</h4>
-
                         <div className="mb-3">
                             <label htmlFor="number" className="form-label fw-bold">Numeral Tonalli</label>
                             <select id="number" className="form-select" value={numero} onChange={(e) => setNumero(parseInt(e.target.value))} style={{ colorScheme: 'dark' }}>
                                 {Array.from({ length: 13 }, (_, i) => i + 1).map((num) => (<option key={num} value={num}>{num}</option>))}
                             </select>
                         </div>
-
                         <div className="mb-3">
                             <label htmlFor="symbol" className="form-label fw-bold">Signo Tonalli</label>
                             <select id="symbol" className="form-select" value={simbolo} onChange={(e) => setSimbolo(e.target.value)} style={{ colorScheme: 'dark' }}>
                                 {tonalliSimbolos.map((sim) => (<option key={sim.español} value={sim.español}>{sim.español}</option>))}
                             </select>
                         </div>
-
                         <div className="mb-3">
                             <label className="form-label fw-bold">Fecha inicial</label>
                             <div className="input-group">
@@ -196,7 +153,6 @@ const Inverso = () => {
                                 <input type="date" className="form-control" value={selectedStartDate} onChange={(e) => setSelectedStartDate(e.target.value)} style={{ colorScheme: 'dark' }} />
                             </div>
                         </div>
-
                         <div className="mb-2">
                             <label className="form-label fw-bold">Fecha límite</label>
                             <div className="input-group">
@@ -206,45 +162,35 @@ const Inverso = () => {
                         </div>
                     </div>
                 )}
-
-                {/* Bloque Xihuitl — visible en modo 'xihuitl' */}
                 {modo === 'xihuitl' && (
                     <div className="col-lg-6 p-4 card shadow-sm">
                         <h4 className="text-center mb-4" style={{ color: '#4ade80' }}>Búsqueda por Xihuitl</h4>
-
                         <div className="mb-3">
                             <label htmlFor="numberX" className="form-label fw-bold">Numeral Xihuitl</label>
                             <select id="numberX" className="form-select" value={numeroX} onChange={(e) => setNumeroX(parseInt(e.target.value))} style={{ colorScheme: 'dark' }}>
                                 {Array.from({ length: 13 }, (_, i) => i + 1).map((num) => (<option key={num} value={num}>{num}</option>))}
                             </select>
                         </div>
-
                         <div className="mb-3">
                             <label htmlFor="symbolX" className="form-label fw-bold">Signo Xihuitl</label>
                             <select id="symbolX" className="form-select" value={simboloX} onChange={(e) => setSimboloX(e.target.value)} style={{ colorScheme: 'dark' }}>
                                 {xihuitlSimbolos.map((sim) => (<option key={sim.español} value={sim.español}>{sim.español}</option>))}
                             </select>
                         </div>
-
                         <div className="mb-3">
                             <label htmlFor="yearStart" className="form-label fw-bold">Año inicial</label>
                             <input type="number" id="yearStart" className="form-control" value={yearStart} onChange={(e) => setYearStart(parseInt(e.target.value))} style={{ colorScheme: 'dark' }} />
                         </div>
-
                         <div className="mb-2">
                             <label htmlFor="yearEnd" className="form-label fw-bold">Año final</label>
                             <input type="number" id="yearEnd" className="form-control" value={yearEnd} onChange={(e) => setYearEnd(parseInt(e.target.value))} style={{ colorScheme: 'dark' }} />
                         </div>
                     </div>
                 )}
-
-                {/* Bloque Ambos — visible en modo 'ambos' */}
                 {modo === 'ambos' && (
                     <div className="col-lg-10 col-xl-9">
                         <div className="card shadow-sm p-4">
                             <h4 className="text-center mb-4" style={{ color: '#f59e0b' }}>Búsqueda por Tonalli y Xihuitl</h4>
-
-                            {/* Selector modo fecha o año */}
                             <div className="mb-4">
                                 <label className="form-label fw-bold">Tipo de periodo</label>
                                 <div className="d-flex gap-3">
@@ -278,9 +224,7 @@ const Inverso = () => {
                                     </div>
                                 </div>
                             </div>
-
                             <div className="row g-3">
-                                {/* Columna Tonalli */}
                                 <div className="col-md-6">
                                     <div className="border rounded p-3" style={{ borderColor: '#60a5fa', borderWidth: '2px' }}>
                                         <h6 className="mb-3" style={{ color: '#60a5fa' }}>Tonalli</h6>
@@ -298,8 +242,6 @@ const Inverso = () => {
                                         </div>
                                     </div>
                                 </div>
-
-                                {/* Columna Xihuitl */}
                                 <div className="col-md-6">
                                     <div className="border rounded p-3" style={{ borderColor: '#4ade80', borderWidth: '2px' }}>
                                         <h6 className="mb-3" style={{ color: '#4ade80' }}>Xihuitl</h6>
@@ -317,8 +259,6 @@ const Inverso = () => {
                                         </div>
                                     </div>
                                 </div>
-
-                                {/* Periodo */}
                                 <div className="col-12">
                                     <div className="border rounded p-3 mt-1" style={{ borderColor: '#f59e0b', borderWidth: '2px' }}>
                                         <h6 className="mb-3" style={{ color: '#f59e0b' }}>
@@ -372,7 +312,6 @@ const Inverso = () => {
                         </div>
                     </div>
                 )}
-                {/* Bloque Civil — visible en modo 'civil' */}
                 {modo === 'civil' && (
                     <div className="col-lg-6 p-4 card shadow-sm">
                         <h4 className="text-center mb-4" style={{ color: '#4ade80' }}>Búsqueda Año civil</h4>
@@ -383,8 +322,6 @@ const Inverso = () => {
                     </div>
                 )}
             </div>
-
-            {/* Botones Buscar y Limpiar */}
             <div className="row justify-content-center mt-4 px-3">
                 <div className="col-lg-10 col-xl-8">
                     <div className="d-flex gap-2">
@@ -409,8 +346,6 @@ const Inverso = () => {
                             Limpiar
                         </button>
                     </div>
-
-                    {/* Mensaje de validación */}
                     {validationMessage && (
                         <div className="alert alert-danger mt-3 mb-0 text-center">
                             {validationMessage}
@@ -418,15 +353,12 @@ const Inverso = () => {
                     )}
                 </div>
             </div>
-
-            {/* Resultados Tonalli */}
             <div className="mt-5">
                 {tonalliMessage && (
                     <div className="alert alert-warning text-center mx-auto" style={{ maxWidth: '800px' }}>
                         {tonalliMessage}
                     </div>
                 )}
-
                 {resultsMezaDesc.length > 0 && (
                     <div className="card shadow-sm mb-4">
                         <div className="card-header text-white" style={{ backgroundColor: '#14532d' }}>
@@ -498,8 +430,6 @@ const Inverso = () => {
                     </div>
                 )}
             </div>
-
-            {/* Resultados Xihuitl */}
             <div className="mt-4">
                 {xihuitlMessage && (
                     <div className="alert alert-warning text-center mx-auto" style={{ maxWidth: '800px' }}>
@@ -544,8 +474,6 @@ const Inverso = () => {
                     </div>
                 )}
             </div>
-
-            {/* Resultados Ambos (Tonalli + Xihuitl combinados) */}
             <div className="mt-4">
                 {ambosMessage && (
                     <div className="alert alert-warning text-center mx-auto" style={{ maxWidth: '800px' }}>
@@ -590,7 +518,6 @@ const Inverso = () => {
                     </div>
                 )}
             </div>
-            {/* Resultados Civil */}
             <div className="mt-4">
                 {civilMessage && (
                     <div className="alert alert-warning text-center mx-auto" style={{ maxWidth: '800px' }}>
@@ -641,5 +568,4 @@ const Inverso = () => {
         </div>
     )
 }
-
 export default Inverso

@@ -275,4 +275,4 @@ os.makedirs(os.path.dirname(output_path), exist_ok=True)
 with open(output_path, "w", encoding="utf-8") as f:
     json.dump(output_data, f, ensure_ascii=False, indent=2)
 
-print(f"¡Datos geométricos exportados exitosamente en: {output_path}!")
+print(f"¡Datos exportados exitosamente en: {output_path}!")

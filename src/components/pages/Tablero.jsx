@@ -2,9 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '../styles/Estilos.css'
 import { getImagePath, tonalliSimbolos, revOrientation, handleCategoryChange, getCellClass, revNumbers } from '../funtions/funtions'
-
 const Tablero = () => {
-  // Estado para los checkboxes y celdas seleccionadas
   const [selectedCategories, setSelectedCategories] = useState({
     animales: false,
     naturales: false,
@@ -15,13 +13,11 @@ const Tablero = () => {
   const [board, setBoard] = useState([])
   const [featuredCells, setFeaturedCells] = useState(new Set())
   const tableContainerRef = useRef(null)
-  //Inicializar tablero
   useEffect(() => {
     const initializeBoard = () => {
       const newBoard = []
       let imageIndex = 0
-      const reversedImages = [...tonalliSimbolos].toReversed()//invertir el orden de simbolos
-      //console.log(reversedImages)
+      const reversedImages = [...tonalliSimbolos].toReversed()
       for (let row = 0; row < 5; row++) {
         const newRow = []
         for (let col = 0; col < 52; col++) {
@@ -30,8 +26,7 @@ const Tablero = () => {
             row,
             col
           })
-          imageIndex++ //aumentar posicion del tablero hasta 260
-          //console.log(imageIndex)
+          imageIndex++
         }
         newBoard.push(newRow)
       }
@@ -39,17 +34,13 @@ const Tablero = () => {
     }
     initializeBoard()
   }, [])
-
-  // Actualizar celdas cuando cambian las categorías
   useEffect(() => {
     const updateFeaturedCells = () => {
       const newFeaturedCells = new Set()
-      // Si no hay categorías seleccionadas, no destacar nada
       if (!selectedCategories.animales & !selectedCategories.naturales && !selectedCategories.cosas && !selectedCategories.abstractos && !selectedCategories.vegetales) {
         setFeaturedCells(newFeaturedCells)
         return
       }
-      //Recorrer todas las celdas y marcar las que coincidan con las categorías seleccionadas
       board.forEach(row => {
         row.forEach(cell => {
           if (selectedCategories[cell.category]) {
@@ -62,8 +53,6 @@ const Tablero = () => {
     }
     updateFeaturedCells()
   }, [selectedCategories, board])
-
-  // Visualizar de derecha a izquierda al cargar el Tablero
   useEffect(() => {
     if (board.length > 0 && tableContainerRef.current) {
       const timer = setTimeout(() => {
@@ -74,8 +63,6 @@ const Tablero = () => {
       return () => clearTimeout(timer);
     }
   }, [board]);
-
-
   return (
     <>
       <div className="container text-center">
@@ -123,8 +110,8 @@ const Tablero = () => {
                 <thead>
                   <tr>
                     {Array.from({ length: 52 }).map((_, index) => {
-                      const cardinality = revOrientation[index % revOrientation.length]/* revOrientation[ ... ]acceso al elemento del array, .length obtiene el número de elementos en el array, % operador módulo en ciclos repetitivos funciona como un contador cíclico o un detector de múltiplos, Ejecutar código cada N iteraciones, en este caso repetir bucle ENOS en array de 52 posiciones*/
-                      if (cardinality === 'Este') { //condicional para marcar inicio de cardinalidad
+                      const cardinality = revOrientation[index % revOrientation.length]
+                      if (cardinality === 'Este') {
                         return (<th key={index} scope="col" style={{ color: '#047ff3' }}>{cardinality}</th>)
                       }
                       return (<th key={index} scope="col">{cardinality}</th>)
@@ -133,7 +120,7 @@ const Tablero = () => {
                   <tr>
                     {Array.from({ length: 52 }).map((_, index) => {
                       const digit = revNumbers[index % revNumbers.length]
-                      if (digit === '1') {//condicional para marcar inicio de trecena
+                      if (digit === '1') {
                         return (<th key={index} scope="col" style={{ backgroundColor: '#015223', color: '#f6f7f6' }}>{digit}</th>)
                       }
                       return (<th key={index} scope="col">{digit}</th>)
@@ -141,14 +128,12 @@ const Tablero = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {board.map((row, rowIndex) => (//generar tablero
+                  {board.map((row, rowIndex) => (
                     <tr key={rowIndex}>
                       {row.map((cell, colIndex) => (
                         <td key={`${rowIndex}-${colIndex}`} className={`text-center ${getCellClass(cell, featuredCells, revNumbers)}`}>
-                          <div><img src={getImagePath(cell.image)} alt={cell.image} className="img-com" /* className="card-img-top img-com" */ /></div>
-                          {/* condicional en el nombre para diferenciar el inicio de veintena */}
+                          <div><img src={getImagePath(cell.image)} alt={cell.image} className="img-com"  /></div>
                           {cell.name === 'Lagarto' ? <small className="d-block" style={{ fontSize: '0.6rem', color: '#a30101', fontWeight: 'bold' }}>{cell.name}</small> : <small className="d-block" style={{ fontSize: '0.5rem' }}>{cell.name}</small>}
-                          {/* <small className="d-block" style={{fontSize:'0.5rem'}}>{cell.name}</small> */}
                         </td>
                       ))}
                     </tr>
@@ -162,5 +147,4 @@ const Tablero = () => {
     </>
   )
 }
-
 export default Tablero
