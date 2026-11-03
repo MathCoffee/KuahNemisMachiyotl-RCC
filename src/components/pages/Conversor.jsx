@@ -367,7 +367,7 @@ const Conversor = () => {
                                         </tbody>
                                     </table>
                                     <small className="text-secondary" style={{ fontSize: '12px', color: '#adb5bd' }}>Hora procesada: {tonalliDia.usedTime}</small><br />
-                                    {tonalliMediodia && (<small className="text-secondary" style={{ fontSize: '12px', color: '#adb5bd' }}>Al medio día de la fecha ingresada el Tonalli es:  <b> {tonalliMediodia.numero.español}-{tonalliMediodia.simbolo.español}</b></small>)}
+                                    {tonalliMediodia && (<small className="text-secondary" style={{ fontSize: '12px', color: '#adb5bd' }}>Al medio día el Tonalli es:  <b> {tonalliMediodia.numero.español}-{tonalliMediodia.simbolo.español}</b></small>)}
                                     {veintenaCaso && (<div className="alert alert-success py-1 small">Esta fecha pertenece a la veintena: {veintenaCaso.veintena}</div>)}
                                     {/* <div className="alert alert-secondary py-1 small mb-1">Hora procesada: {tonalliDia.usedTime}</div> */}
                                     {/* <div className="alert alert-info py-1 small">Inicio del año: {tonalliDia.startTime}</div> */}

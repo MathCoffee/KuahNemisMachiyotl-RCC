@@ -532,7 +532,7 @@ const Inverso = () => {
                                             <td className="text-muted fst-italic" style={{ fontSize: '0.85em', paddingTop: '4px', paddingBottom: '4px', lineHeight: '1.3' }}>
                                                 {(result.xihuitlCasoStartTime || result.xihuitlMezaStartTime) && (
                                                     <>
-                                                        <span style={{ color: '#60a5fa' }}>Nota: </span> En correlación de Caso el año inicia el <strong>{result.xihuitlCasoStartTime}</strong> y en correlación de Meza el año inicia el <strong>{result.xihuitlMezaStartTime}</strong>.
+                                                        <span style={{ color: '#60a5fa' }}>Nota: </span> En correlación de Meza el año inicia el <strong>{result.xihuitlMezaStartTime} de {result.year}</strong> y en correlación de Caso el año inicia el <strong>{result.xihuitlCasoStartTime}</strong>.
                                                     </>
                                                 )}
                                             </td>
@@ -626,7 +626,7 @@ const Inverso = () => {
                                             {(result.xihuitlMezaStartTime || result.xihuitlCasoStartTime) && (
                                                 <tr>
                                                     <td colSpan={5} className="text-muted fst-italic" style={{ fontSize: '0.85em', paddingTop: '2px', paddingBottom: '6px', borderTop: 'none' }}>
-                                                        <span style={{ color: '#059669' }}>📅 Nota: </span> De acuerdo a la correlación de Meza, el año inicia el <strong>{result.xihuitlMezaStartTime}</strong> y de acuerdo a la correlación de Caso el año inicia el <strong>{result.xihuitlCasoStartTime}</strong>.
+                                                        <span style={{ color: '#059669' }}>📅 Nota: </span> De acuerdo a la correlación de Meza, el año inicia el <strong>{result.xihuitlMezaStartTime} de {result.year}</strong> y de acuerdo a la correlación de Caso el año inicia el <strong>{result.xihuitlCasoStartTime}</strong>.
                                                     </td>
                                                 </tr>
                                             )}

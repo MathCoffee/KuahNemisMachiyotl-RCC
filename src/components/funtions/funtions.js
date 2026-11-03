@@ -964,7 +964,7 @@ export const buscarXihuitl = (
             const xihuitl = convertirXihuitl(fechaInicioCaso)
 
             // Se pasa el año como string 'YYYY-01-01' para que obtenerDiaRitual calcule la cuenta Meza
-            const xihuitlMeza = convertirXihuitlMeza(`${year}-01-01`)
+            const xihuitlMeza = convertirXihuitlMeza(`${year}-03-12`)
 
             if (xihuitl && xihuitl.numeroX && xihuitl.numeroX.español === numeroX.toString() && xihuitl.simboloX && xihuitl.simboloX.español === simboloX) {
                 const inicioFecha = xihuitl.inicioAñoFecha
