@@ -277,7 +277,7 @@ const Conversor = () => {
                                 </div>
                             </div>
                         </div>
-                        <small className="text-secondary" style={{ fontSize: '13px' }}>* Correlación de Meza basado en la fecha de referencia: día 1-Cipactli, año 1-Tochtli (12 de marzo de 2026)</small><br /><br />
+                        <small className="text-secondary" style={{ fontSize: '13px' }}>* Correlación de Meza basado en la fecha: día 1-Cipactli, año 1-Tochtli (12 de marzo de 2026)</small><br /><br />
                         <p className="text-theme-muted">* Correlación de Caso</p>
                         <div className="col-md-6">
                             <div className="card" >
@@ -361,7 +361,7 @@ const Conversor = () => {
                                 </div>
                             </div>
                         </div>
-                        <small className="text-secondary" style={{ fontSize: '13px' }}>* Correlación de Caso basado en la fecha de referencia: día 1-Coatl, año 3-Calli (13 de agosto de 1521)</small>
+                        <small className="text-secondary" style={{ fontSize: '13px' }}>* Correlación de Caso basado en la fecha: día 1-Coatl, año 3-Calli (13 de agosto de 1521)</small>
                     </div>
                 </div>
             )}
