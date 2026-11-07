@@ -10,7 +10,7 @@ const Inicio = () => {
                     <div class="col-md-11">
                         <br></br>
                         <h1>KĀUHNEMISMACHIYOTL</h1>
-                        <p style={{ textAlign: 'justify' }}>El <strong>Kāuhnemismachiyotl</strong> es una Plataforma Interactiva para el análisis de correlaciones Calendáricas Mesoamericanas. Es una forma de conocer y comprender el cómputo del tiempo precolonial, la matemática implícita y la cuenta del tiempo hasta nuestros días haciendo una reflexión del pasado hacia el futuro y del futuro hacia el pasado.</p><br></br>
+                        <p style={{ textAlign: 'justify' }}>El <strong>Kāuhnemismachiyotl</strong> es una Plataforma Interactiva para el análisis de correlaciones Calendáricas Mesoamericanas. Es una forma de conocer y comprender el cómputo del tiempo precolonial, la matemática implícita y la cuenta del tiempo hasta nuestros días haciendo una reflexión del pasado hacia el futuro y del futuro hacia el pasado.</p>
                         <p style={{ textAlign: 'justify' }}>Este proyecto nace con el interés de compartir lo que hemos aprendido en la búsqueda del reconocimiento de otros sistemas de conocimientos para dar lugar a otras epistemologías inspiradas en la herencia que dejaron nuestros ancestros a través de generaciones, así como la reapropiación de los mismos recuperando nuestra propia identidad como una vía a la descolonización.</p>
                         <p style={{ textAlign: 'justify' }}>Para el cálculo de fechas nos basamos en dos correlaciones:
                             <ul>
@@ -69,6 +69,7 @@ const Inicio = () => {
                                 <li>Meza Gutiérrez, A. (2024). <i> Cauhpohualli. Collar de turquesas engarzado con oro de Sol.</i> (4a ed.) Colección Ometeotl. Editorial Altepetl. </li>
                                 <li>Milbrath, S. (2013). <i>Heaven and earth in ancient Mexico: Astronomy and seasonal cycles in the Codex Borgia. </i> Austin: University of Texas Press.</li>
                                 <li>Thouvenot M., Kruell G., Acevedo Frómeta O. (2024). <i>Tiempos superpuestos. Debates sobre el encuentro entre los calendarios náhuatl y europeo.</i>  Universidad Nacional Autónoma de México, Instituto de Investigaciones Históricas.</li>
+                                <li>Anónimo. (s. f.). Códice Borgia [Manuscrito precolombino]. Biblioteca Apostólica Vaticana. https://digi.vatlib.it/view/MSS_Borg.mess.1</li>
                             </ul>
                         </p><br></br>
                     </div>
