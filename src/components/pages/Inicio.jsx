@@ -14,8 +14,8 @@ const Inicio = () => {
                         <p style={{ textAlign: 'justify' }}>Este proyecto nace con el interés de compartir lo que hemos aprendido en la búsqueda del reconocimiento de otros sistemas de conocimientos para dar lugar a otras epistemologías inspiradas en la herencia que dejaron nuestros ancestros a través de generaciones, así como la reapropiación de los mismos recuperando nuestra propia identidad como una vía a la descolonización.</p>
                         <p style={{ textAlign: 'justify' }}>Para el cálculo de fechas nos basamos en dos correlaciones:
                             <ul>
-                                <li>Correlación Alfonso Caso basada en la fecha de día 1-Serpiente, año 3-Casa (13 de agosto de 1521).</li>
-                                <li>Correlación Arturo Meza basada en la fecha de día 1-lagarto, año 1-Tochtli (12 de marzo de 2026 ).</li>
+                                <li>Correlación Alfonso Caso basada en la fecha día 1-Serpiente, año 3-Casa (13 de agosto de 1521).</li>
+                                <li>Correlación Arturo Meza basada en la fecha día 1-lagarto, año 1-Conejo (12 de marzo de 2026 ).</li>
                             </ul>
                         </p>
 
