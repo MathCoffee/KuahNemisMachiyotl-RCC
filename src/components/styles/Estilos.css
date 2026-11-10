@@ -6,38 +6,60 @@
     width: auto;
     display: inline-block;
 }
+
 .text-subtitle {
     font-size: large;
     font-weight: bold;
 }
+
 @keyframes spin-right {
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
 }
+
 @keyframes spin-left {
     from {
         transform: rotate(360deg);
     }
+
     to {
         transform: rotate(0deg);
     }
 }
+
 .spinning-right {
     animation: spin-right 20s linear infinite;
 }
+
 .spinning-left {
     animation: spin-left 20s linear infinite;
 }
+
 .gear.spinning-right {
     animation-duration: 13s;
 }
+
 .gear.spinning-left {
     animation-duration: 20s;
 }
+
 .navbar-links {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.text-color {
+    font-weight: 500;
+}
+
+.text-justify {
+    text-align: justify;
+}
+
+.title-justify {
+    text-align: center;
 }
